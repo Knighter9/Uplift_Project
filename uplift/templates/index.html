@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../static/index.js"></script>
+    <link rel="stylesheet" href="../static/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <span class="navbar-toggle" id='js-navbar-toggle'>
+            <div class="hamburger"></div>
+            <div class="hamburger"></div>
+            <div class="hamburger"></div>
+        </span>
+        <a href="{{url_for('main.index')}}" class="logo">logo</a>
+        <ul class="main-nav" id="js-menu">
+            <li>
+                <a href="{{url_for('main.index')}}" class="nav-links">Home</a>
+            </li>
+            <li>
+                <a href="#" class="nav-links">Menu</a>
+            </li>
+            <li>
+                <a href="#" class="nav-links">Order</a>
+            </li>
+            <li>
+                <a href="{{url_for('users.register')}}" class="nav-links">Sign Up</a>
+            </li>
+            <li>
+                <a href="{{url_for('users.login')}}" class="nav-links">Log in</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="page-container">
+
+    </div>
+    <script id='homepage-template' type='text/x-handelbars-template'>
+        <h1>Welcome to Uplift</h1>
+        <p>This will be the homepage information
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+            Quae at repudiandae quod numquam cum suscipit velit doloremque
+             provident reprehenderit dicta incidunt, eos esse, minima quo cupiditate 
+             dignissimos ipsum perspiciatis ad!
+        </p>
+        <p>This will be the homepage information
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+            Quae at repudiandae quod numquam cum suscipit velit doloremque
+             provident reprehenderit dicta incidunt, eos esse, minima quo cupiditate 
+             dignis
+        </p>
+    </script>
+    <script id="register-template" type="text/x-handelbars-template">
+        <h1>This is the registration form</h1>
+        <form>
+            <input  class='register_username' type='text' placeholder='Username' name='username'>
+            <input class='register_email' type="text" placeholder ='Email' name='email'>
+            <input class='register_password' type="password" placeholder = "Password" name='password'>
+            <input class='register_password_confirm' type="password" placeholder="Password" name='password'>
+            <input type="submit" class = 'form-submit'>
+        </form>
+    </script>
+
+    <script id="login-template" type="text/x-handelbars-template">
+        <h1>This is the login form</h1>
+        <form>
+            <input  type="text" placeholder='username' name='username'>
+            <input type="password" placeholder='password' name='password'>
+            <input type="submit" class='form-submit'>
+        </form>
+    </script>
+    <script id='welcome-template' type='text/x-handelbars-template'>
+        <h1>Welcome to the Uplift {% raw}</h1>
+    </script>
+</body>
+
+</html>
