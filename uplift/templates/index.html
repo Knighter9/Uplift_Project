@@ -27,7 +27,7 @@
                 <a href="#" class="nav-links">Menu</a>
             </li>
             <li>
-                <a href="#" class="nav-links">Order</a>
+                <a href="{{url_for('users.logout')}}" class="nav-links">Logout</a>
             </li>
             <li>
                 <a href="{{url_for('users.register')}}" class="nav-links">Sign Up</a>
@@ -55,27 +55,48 @@
              dignis
         </p>
     </script>
+
     <script id="register-template" type="text/x-handelbars-template">
+
         <h1>This is the registration form</h1>
-        <form>
+        <form class = 'form'>
+            <div class="username-errors register-errors"></div>
             <input  class='register_username' type='text' placeholder='Username' name='username'>
+
+            <div class='email-errors register-errors'></div>
             <input class='register_email' type="text" placeholder ='Email' name='email'>
+
+            <div class='password-errors register-errors'></div>
             <input class='register_password' type="password" placeholder = "Password" name='password'>
+
+            <div class='password-errors register-errors'></div>
             <input class='register_password_confirm' type="password" placeholder="Password" name='password'>
+
             <input type="submit" class = 'form-submit'>
         </form>
+        
     </script>
 
-    <script id="login-template" type="text/x-handelbars-template">
+    <script class="form-controll" id="login-template" type="text/x-handelbars-template">
         <h1>This is the login form</h1>
-        <form>
-            <input  type="text" placeholder='username' name='username'>
-            <input type="password" placeholder='password' name='password'>
+        <form class = 'form'>
+            <div class='login-errors username-errors'></div>
+            <input class='login-username' type="text" placeholder='username' name='username'>
+            <input class='login-password' type="password" placeholder='password' name='password'>
+            <div class='login-errors username-errors'></div>
             <input type="submit" class='form-submit'>
         </form>
     </script>
-    <script id='welcome-template' type='text/x-handelbars-template'>
-        <h1>Welcome to the Uplift {% raw}</h1>
+    <script class='form-controll' id='home-template' type='text/x-handelbars-template'>
+        <h1>Welcome to the Uplift</h1>
+        <p>This is the home template the data here is private so you had to login to get to it</p>
+        <p>This is so awesome I actually really like this site</p>
+    </script>
+    <script id='logout-template' type="text/x-handlebars-template">
+        <h1> {%raw -%} {{username}} {%- endraw %}, Do you want to Log out? </h1>
+        <form action="{{url_for('users.logout')}}" method="POST">
+            <input type="submit" class="test">
+        </form>
     </script>
 </body>
 

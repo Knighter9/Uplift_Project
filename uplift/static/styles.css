@@ -56,6 +56,31 @@ html,body{
     display: block;
 }
 
+/* styling for forms */
+.form{
+    display: flex;
+    flex-wrap: wrap;
+}
+.form input{
+    width: 80%;
+    margin: 5px;
+    padding: 5px;
+   
+}
+.register-errors-active{
+    margin: 5px;
+    padding: 5px;
+    width: 80%;
+    
+}
+.register-errors span{
+    color: red;
+    display: block;
+    width: 80%;
+    padding: 2px;
+    margin-left: 20px;
+}
+
 
 /*media queries */
 @media screen and (min-width: 768px){
