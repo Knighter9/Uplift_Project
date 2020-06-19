@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     load_first_page();
     linking_logic();
-    load_page();
+
 
 });
 
@@ -17,13 +17,18 @@ document.addEventListener("DOMContentLoaded", () => {
 function load_first_page() {
     let url = window.location.href;
     console.log(`The url right now is ${url}`)
-    console.log(url.includes('logout'));
     if (url.includes('logout')) {
         let new_url = 'http://127.0.0.1:5000/'
         let source = document.querySelector('#homepage-template').innerHTML;
         let destination = document.querySelector('.page-container');
         destination.innerHTML = source;
         history.replaceState(document.querySelectorAll('.page-container').innerHTML, '', new_url);
+        let mainNav = document.getElementById('js-menu');
+        let navBarToggle = document.getElementById('js-navbar-toggle');
+        // creating the active class on the navbar
+        navBarToggle.addEventListener('click', function (event) {
+            mainNav.classList.toggle('active');
+        });
     }
     else if (url === 'http://127.0.0.1:5000/') {
         let source = document.querySelector('#homepage-template').innerHTML;
@@ -40,6 +45,56 @@ function load_first_page() {
             mainNav.classList.toggle('active');
 
         });
+    }
+    else if (url == "http://127.0.0.1:5000/login?next=%2Fexplore") {
+        if (localStorage.getItem('login') == 'true') {
+            console.log('Looks like you can login');
+            let source = document.querySelector('#explore-template').innerHTML;
+            let destination = document.querySelector('.page-container');
+            destination.innerHTML = source;
+            history.replaceState(document.innerHTML, 'explore', 'explore');
+            let mainNav = document.getElementById('js-menu');
+            let navBarToggle = document.getElementById('js-navbar-toggle');
+            // creating the active class on the navbar
+            navBarToggle.addEventListener('click', function (event) {
+                mainNav.classList.toggle('active');
+            });
+            form_controll;
+
+        }
+        else {
+            console.log("Looks like you can't access this page, login");
+            let source = document.querySelector('#login-template').innerHTML;
+            destination = document.querySelector('.page-container');
+            destination.innerHTML = source;
+            history.replaceState(document.innerHTML, 'login', 'login');
+            let mainNav = document.getElementById('js-menu');
+            let navBarToggle = document.getElementById('js-navbar-toggle');
+            // creating the active class on the navbar
+            navBarToggle.addEventListener('click', function (event) {
+                mainNav.classList.toggle('active');
+            });
+            form_controll;
+
+        }
+    }
+    else if (url == "http://127.0.0.1:5000/explore") {
+        if (localStorage.getItem('login') == 'true') {
+            console.log('you have permision');
+            let source = document.querySelector('#explore-template').innerHTML;
+            let destination = document.querySelector('.page-container');
+            destination.innerHTML = source;
+            history.replaceState(document.innerHTML, 'explore', 'explore');
+            let mainNav = document.getElementById('js-menu');
+            let navBarToggle = document.getElementById('js-navbar-toggle');
+            // creating the active class on the navbar
+            navBarToggle.addEventListener('click', function (event) {
+                mainNav.classList.toggle('active');
+            });
+        }
+        else {
+            console.log('There is no access granted for you')
+        }
     }
     else {
         let partial_url = url.split('http://127.0.0.1:5000/').pop();
@@ -80,8 +135,8 @@ function linking_logic() {
                     form_controll();
                 }
                 else {
-                    if (`${form_name}-template` == 'home-template') {
-                        if (localStorage.getItem('login') != true) {
+                    if (`${form_name}-template` == 'explore-template') {
+                        if (localStorage.getItem('login') != 'true') {
                             console.log("You can't access this link yet you need to login first");
                             let source = document.querySelector('#login-template');
                             let destination = document.querySelector('.page-conatiner')
@@ -89,12 +144,14 @@ function linking_logic() {
                             history.pushState(destination.innerHTML, 'login', 'login');
                             form_controll()
                         }
-                        else if (localStorage.getItem('login') == true) {
-                            let source = document.querySelector('#home-template');
+                        else if (localStorage.getItem('login') == 'true') {
+                            /*let source = document.querySelector('#explore-template').innerHTML;
                             let destination = document.querySelector('.page-container');
                             destination.innerHTML = source;
-                            history.pushState(destination.innerHTML, 'home', 'home');
-                            form_controll()
+                            history.pushState(destination.innerHTML, 'explore', 'explore');
+                            */
+                            explore_load();
+                            form_controll();
                         }
                     }
                     let source = document.querySelector(`#${form_name}-template`).innerHTML;
@@ -134,6 +191,12 @@ function form_controll() {
                     if (data.success) {
                         console.log('the ajax call has been successful');
                         console.log(`Welcom to the site ${data.username}`);
+                        localStorage.setItem('login', true);
+                        //load the explore page
+                        let source = document.querySelector('#explore-template').innerHTML;
+                        let destination = document.querySelector('.page-container');
+                        destination.innerHTML = source;
+                        history.pushState(document.innerHTML, 'explore', 'explore');
                     }
                     else {
                         console.log('There are errors the server has sent back')
@@ -192,11 +255,11 @@ function form_controll() {
                 request.onload = () => {
                     data = JSON.parse(request.responseText);
                     if (data.success) {
-                        localStorage.setItem('login', true);
-                        let source = document.querySelector('#home-template').innerHTML;
+                        localStorage.setItem('login', 'true');
+                        let source = document.querySelector('#explore-template').innerHTML;
                         let destination = document.querySelector('.page-container');
                         destination.innerHTML = source;
-                        history.pushState(destination.innerHTML, 'home', 'home');
+                        history.pushState(destination.innerHTML, 'explore', 'explore');
 
                     }
                     else {
@@ -218,11 +281,13 @@ function form_controll() {
                 console.log('The request is about ')
                 let submit_data = new FormData();
                 submit_data.append('logout', 'I want to logout');
+                localStorage.setItem('login', false);
                 request.send(submit_data);
+
             }
 
-            else if (form_name == 'home') {
-                if (localStorage.getItem('login') != true) {
+            else if (form_name == 'explore') {
+                if (localStorage.getItem('login') != 'true') {
                     console.log('You must login first')
                     let source = document.querySelector('#login-template').innerHTML;
                     let destination = document.querySelectorAll('.page-container');
@@ -231,7 +296,7 @@ function form_controll() {
 
 
                 }
-                else if (localStorage.getItem('login') == true) {
+                else if (localStorage.getItem('login') == 'true') {
                     let source = document.querySelector('#home-template').innerHTML;
                     let destination = document.querySelector('.page-container');
                     destination.innerHTML = source;
@@ -253,6 +318,40 @@ function load_page() {
         destination.innerHTML = source;
         history.pushState(destination.innerHTML, 'login', 'login');
     }
+}
+function explore_load() {
+    console.log('The explore function is running');
+    let source = document.querySelector('#explore-template').innerHTML;
+    let destination = document.querySelector('.page-container');
+    destination.innerHTML = source;
+    history.pushState(destination.innerHTML, 'explore', 'explore');
+
+    const request = new XMLHttpRequest();
+    request.open('post', '/explore');
+    request.onload = () => {
+        let data = JSON.parse(request.responseText);
+        if (data.success) {
+            console.log('we are getting the channels');
+            let channels = data.channels;
+            let channel_list = document.querySelector('.channel-list');
+
+            let length = channels.length;
+            for (let i = 0; i < length; i++) {
+                let li = document.createElement('li');
+                li.classList.add('channel_element');
+                li.append(channels[i]);
+                console.log(li);
+                console.log(channel_list);
+                channel_list.append(li);
+            }
+        }
+        else {
+            console.log('The server was unable to find the channels');
+        }
+    }
+    let submit_data = new FormData;
+    submit_data.append('i want data', 'give me data');
+    request.send(submit_data);
 }
 
 // for the history api. Getting the back button to work

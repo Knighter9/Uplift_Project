@@ -80,6 +80,23 @@ html,body{
     padding: 2px;
     margin-left: 20px;
 }
+.channel-list{
+    display: flex;
+    width: 90%;
+    margin-right: auto;
+    margin-left: auto;
+    padding: 5px;
+    flex-wrap: wrap;
+    list-style-type: none;
+}
+.channel-list li{
+    margin: 5px;
+    padding: 5px;
+    width: 100px;
+    height: 20px;
+    background-color: purple;
+    
+}
 
 
 /*media queries */

@@ -24,7 +24,7 @@
                 <a href="{{url_for('main.index')}}" class="nav-links">Home</a>
             </li>
             <li>
-                <a href="#" class="nav-links">Menu</a>
+                <a href="{{url_for('main.explore')}}" class="nav-links">prayer hands to come</a>
             </li>
             <li>
                 <a href="{{url_for('users.logout')}}" class="nav-links">Logout</a>
@@ -87,10 +87,9 @@
             <input type="submit" class='form-submit'>
         </form>
     </script>
-    <script class='form-controll' id='home-template' type='text/x-handelbars-template'>
+    <script class='form-controll' id='explore-template' type='text/x-handelbars-template'>
         <h1>Welcome to the Uplift</h1>
-        <p>This is the home template the data here is private so you had to login to get to it</p>
-        <p>This is so awesome I actually really like this site</p>
+        <ul class='channel-list'></ul>
     </script>
     <script id='logout-template' type="text/x-handlebars-template">
         <h1> {%raw -%} {{username}} {%- endraw %}, Do you want to Log out? </h1>
