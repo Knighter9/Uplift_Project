@@ -29,6 +29,7 @@ function load_first_page() {
         navBarToggle.addEventListener('click', function (event) {
             mainNav.classList.toggle('active');
         });
+
     }
     else if (url === 'http://127.0.0.1:5000/') {
         let source = document.querySelector('#homepage-template').innerHTML;
@@ -45,6 +46,7 @@ function load_first_page() {
             mainNav.classList.toggle('active');
 
         });
+
     }
     else if (url == "http://127.0.0.1:5000/login?next=%2Fexplore") {
         if (localStorage.getItem('login') == 'true') {
@@ -61,6 +63,7 @@ function load_first_page() {
             });
             form_controll;
 
+
         }
         else {
             console.log("Looks like you can't access this page, login");
@@ -76,6 +79,7 @@ function load_first_page() {
             });
             form_controll;
 
+
         }
     }
     else if (url == "http://127.0.0.1:5000/explore") {
@@ -90,10 +94,12 @@ function load_first_page() {
             // creating the active class on the navbar
             navBarToggle.addEventListener('click', function (event) {
                 mainNav.classList.toggle('active');
+
             });
         }
         else {
             console.log('There is no access granted for you')
+
         }
     }
     else {
@@ -110,11 +116,13 @@ function load_first_page() {
 
         });
         form_controll();
+
     }
 }
 
 // loading the forms
 function linking_logic() {
+    console.log('The linking function has been called');
     document.body.addEventListener('click', function (event) {
         var tag = event.target;
         if (tag.tagName == 'A' && tag.href && event.button == 0) {
@@ -145,6 +153,7 @@ function linking_logic() {
                             form_controll()
                         }
                         else if (localStorage.getItem('login') == 'true') {
+                            console.log('You will have access to this page');
                             /*let source = document.querySelector('#explore-template').innerHTML;
                             let destination = document.querySelector('.page-container');
                             destination.innerHTML = source;
@@ -170,6 +179,7 @@ function linking_logic() {
 };
 
 function form_controll() {
+    console.log('The form function has been called');
     const url = window.location.href;
     const form_name = url.split('http://127.0.0.1:5000/').pop();
     console.log('The name of the form is');
@@ -249,13 +259,13 @@ function form_controll() {
             }
             else if (form_name == 'login') {
                 const request = new XMLHttpRequest();
-
+                console.log('an ajax call to th login function is being sent');
                 request.open('post', '/login');
 
                 request.onload = () => {
                     data = JSON.parse(request.responseText);
                     if (data.success) {
-                        localStorage.setItem('login', 'true');
+                        localStorage.setItem('login', true);
                         let source = document.querySelector('#explore-template').innerHTML;
                         let destination = document.querySelector('.page-container');
                         destination.innerHTML = source;
@@ -324,12 +334,15 @@ function explore_load() {
     let source = document.querySelector('#explore-template').innerHTML;
     let destination = document.querySelector('.page-container');
     destination.innerHTML = source;
-    history.pushState(destination.innerHTML, 'explore', 'explore');
 
     const request = new XMLHttpRequest();
     request.open('post', '/explore');
     request.onload = () => {
+        console.log('This is should be running');
+        console.log(request.responseText);
+
         let data = JSON.parse(request.responseText);
+        console.log('The explore ajax call is running')
         if (data.success) {
             console.log('we are getting the channels');
             let channels = data.channels;
@@ -348,8 +361,9 @@ function explore_load() {
         else {
             console.log('The server was unable to find the channels');
         }
+
     }
-    let submit_data = new FormData;
+    let submit_data = new FormData();
     submit_data.append('i want data', 'give me data');
     request.send(submit_data);
 }

@@ -19,6 +19,7 @@ def explore():
 
     elif request.method == "POST":
         print("what is up with you")
+        print("The post route has been called I am about to send explore data")
         data = {
             "success": True,
             "channels": [
