@@ -23,7 +23,7 @@ def explore():
         data = {
             "success": True,
             "channels": [
-                "test1",
+                "Testimonies",
                 "test32",
                 "test3",
                 "test5",

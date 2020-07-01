@@ -27,8 +27,12 @@ class User(db.Model, UserMixin):
 class Channel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     channel_name = db.Column(db.String(120), unique=True, nullable=False)
+    about = db.Column(db.String(500), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     num_users = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return f"{self.channel_name}"
 
 
 class Channel_Members(db.Model):

@@ -9,6 +9,189 @@ html,body{
     padding: 0;
     margin: 0;
 }
+.navbar{
+    font-size: 18px;
+    background-color: lightslategray;
+    border: 1px solid rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.main-nav{
+    list-style-type: none;
+    display: none;
+    order: 4;
+
+}
+.nav-links,.logo,.homepage-logo{
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.main-nav li {
+    text-align: center;
+    margin: 15px auto;
+}
+.user-pro-container{
+    order: -2;
+    display: flex;
+    align-items: center;
+    flex: 0;
+    max-height: 30px;
+}
+.logo{
+    font-size: 22px;
+    order: -1;
+    margin-left: 20px;
+}
+.homepage-logo{
+    font-size: 22px;
+    order: -1;
+}
+.user-profile-pic{
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    border-radius: 50%;
+    margin-left: 20px;
+    cursor: pointer;
+
+}
+.hamburger{
+    width: 26px;
+    height: 4px;
+    background-color: black;
+    margin: 4px 0;
+}
+.navbar-toggle {
+    cursor: pointer;
+    color: rgba(255,255,255,0.8);
+    font-size: 24px;
+    margin-right: 20px;
+    display: inline-block;
+    order: 6;
+}
+.active{
+    order: 5;
+    /*display: block;*/
+    padding-top: 20px;
+    display: block;
+}
+
+
+/* styling for the side nav pop up */
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+  }
+  
+  .sidenav a:hover {
+    color: #f1f1f1;
+  }
+  .sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+    color: #818181;
+    cursor: pointer;
+  }
+  .sidenav .closebtn:hover{
+      color: #f1f1f1;
+  }
+
+
+
+/*
+
+.navbar {
+    font-size: 18px;
+    background-color: lightslategray;
+    border: 1px solid rgba(0,0,0,0.2);
+    padding-bottom: 10px;
+
+}
+.main-nav{
+    list-style-type: none;
+    display: none;
+}
+.nav-links,.logo,.homepage-logo{
+    text-decoration: none;
+    color:rgba(255,255,255,0.7);
+}
+.main-nav li {
+    text-align: center;
+    margin: 15px auto;
+}
+.logo{
+    font-size: 22px;
+    margin-top: 10px;
+    margin-left: 20px;
+}
+.homepage-logo{
+    display: inline-block;
+    font-size: 22px;
+    margin-top: 10px;
+    margin-left:20px;
+}
+.user-profile-pic{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-top: 10px;
+    margin-left: 20px;
+    background-color: red;
+    display: inline-block;
+}
+.hamburger{
+    width: 26px;
+    height: 4px;
+    background-color: black;
+    margin: 4px 0;
+}
+.navbar-toggle {
+    position: absolute;
+    float: right;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+    color: rgba(255,255,255,0.8);
+    font-size: 24px;
+}
+.active{
+    display: block;
+}
+*/
+/*
+html,body{
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
 
 .navbar {
     font-size: 18px;
@@ -37,6 +220,13 @@ html,body{
     margin-top: 10px;
     margin-left: 20px;
 }
+.user-profile-pic{
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: red;
+    border: 2px solid blue;
+}
 .hamburger{
     width: 26px;
     height: 4px;
@@ -55,7 +245,7 @@ html,body{
 .active{
     display: block;
 }
-
+*/
 /* styling for forms */
 .form{
     display: flex;
@@ -80,25 +270,76 @@ html,body{
     padding: 2px;
     margin-left: 20px;
 }
+.channel-container{
+    width: 95%;
+    margin: 2.5%;
+    padding: 10px;
+    background-color: rgba(219,219,219, 0.5);
+}
 .channel-list{
     display: flex;
-    width: 90%;
-    margin-right: auto;
-    margin-left: auto;
+    width: 98%;
+    margin: 1%;
     padding: 5px;
     flex-wrap: wrap;
     list-style-type: none;
 }
 .channel-list li{
-    margin: 5px;
-    padding: 5px;
-    width: 100px;
-    height: 20px;
+    width: 20%;
+    max-width: 100px;
+    margin-left:15%;
+    margin-right: 15%;
+    height: 30px;
+    margin-top: 5px;
+    margin-bottom:5px;
+    padding: 2px;
+    font-size: 18px;
+    text-align: center;
+    border-radius: 5%;
     background-color: purple;
-    
+}
+.channel-list li a{
+    text-decoration: none;
 }
 
+.channel-container h2{
+    text-align: center;
+}
 
+.channel-info-container{
+    width: 98%;
+    margin: 1%;
+    padding: 5px;
+}
+.channel-info-container h1,h2,h3,h4{
+    text-align: center;
+}
+.channel-info-container p{
+    margin: 5px;
+    padding: 5px;
+}
+.channel-info-container span{
+    float: right;
+}
+
+.joined{
+    width: 30px;
+    height: 20px;
+    font-size: 16px;
+    background-color: red;
+    color: white;
+    text-decoration: none;
+    border-radius: 10%;
+}
+.not-joined{
+    width: 30px;
+    height: 20px;
+    font-size: 16px;
+    background-color: blue;
+    color: white;
+    text-decoration: none;
+    border-radius: 10%;
+}
 /*media queries */
 @media screen and (min-width: 768px){
     .navbar {
@@ -123,8 +364,14 @@ html,body{
     .logo {
         margin-top: 0;
     }
+    .homepage-logo{
+        margin-top: 0;
+    }
     .navbar-toggle {
         display: none;
+    }
+    .user-profile-pic{
+        margin-top: 0;
     }
     .logo:hover,
     .nav-links:hover {

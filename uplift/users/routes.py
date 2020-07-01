@@ -1,4 +1,12 @@
-from flask import render_template, request, Blueprint, jsonify, json, redirect, url_for
+from flask import (
+    render_template,
+    request,
+    Blueprint,
+    jsonify,
+    json,
+    redirect,
+    url_for,
+)
 from .utils import verify_registration
 from uplift.models import User
 from uplift import db

@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="../static/index.js"></script>
-    <link rel="stylesheet" href="../static/styles.css">
+    <script src="../../static/index.js"></script>
+    <link rel="stylesheet" href="../../static/styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.1/css/all.css"
@@ -15,12 +15,53 @@
 
 <body>
     <nav class="navbar">
+
+    </nav>
+    <div class="page-container">
+
+    </div>
+    <script id='homepage-nav-template' type="text/x-handlebars-template">
         <span class="navbar-toggle" id='js-navbar-toggle'>
             <div class="hamburger"></div>
             <div class="hamburger"></div>
             <div class="hamburger"></div>
         </span>
-        <a href="{{url_for('main.index')}}" class="logo">logo</a>
+        <a href="{{url_for('main.index')}}" class="homepage-logo">logo</a>
+        <ul class="main-nav" id="js-menu">
+            <li>
+                <a href="{{url_for('main.index')}}" class="nav-links">Home</a>
+            </li>
+            <li>
+                <a href="{{url_for('main.explore')}}" class="nav-links">prayer hands to come</a>
+            </li>
+            <li>
+                <a href="{{url_for('users.register')}}" class="nav-links">Sign Up</a>
+            </li>
+            <li>
+                <a href="{{url_for('users.login')}}" class="nav-links">Log in</a>
+            </li>
+        </ul>
+    </script>
+
+    <script id="explore-nav-template" type="text/x-handlebars-template">
+        <span class="navbar-toggle" id='js-navbar-toggle'>
+            <div class="hamburger"></div>
+            <div class="hamburger"></div>
+            <div class="hamburger"></div>
+        </span>
+        
+        <div class="user-pro-container">
+            <a href="{{url_for('main.index')}}" class="logo">logo</a>
+            <div class="user-profile-pic"></div>
+        </div>
+        <div id="mySidenav" class="sidenav">
+            <div class="closebtn">&times;</div>
+            <a href="#">About</a>
+            <a href="#">Services</a>
+            <a href="#">Clients</a>
+            <a href="#">Contact</a>
+            <a href="#">MyChannels</a>
+        </div>
         <ul class="main-nav" id="js-menu">
             <li>
                 <a href="{{url_for('main.index')}}" class="nav-links">Home</a>
@@ -31,17 +72,9 @@
             <li>
                 <a href="{{url_for('users.logout')}}" class="nav-links">Logout</a>
             </li>
-            <li>
-                <a href="{{url_for('users.register')}}" class="nav-links">Sign Up</a>
-            </li>
-            <li>
-                <a href="{{url_for('users.login')}}" class="nav-links">Log in</a>
-            </li>
         </ul>
-    </nav>
-    <div class="page-container">
+    </script>
 
-    </div>
     <script id='homepage-template' type='text/x-handelbars-template'>
         <h1>Welcome to Uplift</h1>
         <p>This will be the homepage information
@@ -91,13 +124,27 @@
     </script>
     <script class='form-controll' id='explore-template' type='text/x-handelbars-template'>
         <h1>Welcome to the Uplift</h1>
-        <ul class='channel-list'></ul>
+        <div class="channel-container">
+            <h2>Popular Channels</h2>
+            <ul class='channel-list'></ul>
+        </div>
     </script>
     <script id='logout-template' type="text/x-handlebars-template">
         <h1> {%raw -%} {{username}} {%- endraw %}, Do you want to Log out? </h1>
         <form action="{{url_for('users.logout')}}" method="POST">
             <input type="submit" class="test">
         </form>
+    </script>
+    <script id='explore-channel-template' type="text/x-handlebars-template">
+        <h1 id='Channel_Name'></h1>
+        <div class = 'channel-container'>
+            <div class="channel-info-container">
+                <h3>{%raw -%} {{channel_name}} {%- endraw %}</h3>
+                <p>{%raw -%} {{about}} {%- endraw%}</p>
+                <span> Number of users {%raw -%} {{num_users}} {%- endraw %}</span>
+                <button class="channel-info-btn"></button>
+            </div>
+        </div>
     </script>
 </body>
 

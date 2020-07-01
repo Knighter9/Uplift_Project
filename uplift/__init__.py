@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, session
 
 # import the congig class
 from config import Config
@@ -18,8 +18,9 @@ app.config.from_object(Config)
 """
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesytem"
-Session(app)
-"""
+Session(app)"""
+
+# app.secret_key = Config.SECRET_KEY
 # creae an engine
 db = SQLAlchemy(app)
 # migrate the changes to the app
@@ -33,7 +34,8 @@ login.login_view = "users.login"
 from uplift import models
 from uplift.users.routes import users
 from uplift.main.routes import main
-
+from uplift.channels.routes import channels
 
 app.register_blueprint(main)
 app.register_blueprint(users)
+app.register_blueprint(channels)
