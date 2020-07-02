@@ -43,6 +43,7 @@
         </ul>
     </script>
 
+
     <script id="explore-nav-template" type="text/x-handlebars-template">
         <span class="navbar-toggle" id='js-navbar-toggle'>
             <div class="hamburger"></div>
@@ -112,7 +113,7 @@
         
     </script>
 
-    <script class="form-controll" id="login-template" type="text/x-handelbars-template">
+    <script id="login-template" class="form-controll" type="text/x-handelbars-template">
         <h1>This is the login form</h1>
         <form class = 'form'>
             <div class='login-errors username-errors'></div>
@@ -122,19 +123,21 @@
             <input type="submit" class='form-submit'>
         </form>
     </script>
-    <script class='form-controll' id='explore-template' type='text/x-handelbars-template'>
+    <script id='logout-template' type="text/x-handlebars-template">
+        <h1> {%raw -%} {{username}} {%- endraw %}, Do you want to Log out? </h1>
+        <form class="form" action="{{url_for('users.logout')}}" method="POST">
+            <input type="submit" class="test">
+        </form>
+    </script>
+
+    <script id='explore-template' class='form-controll' type='text/x-handelbars-template'>
         <h1>Welcome to the Uplift</h1>
         <div class="channel-container">
             <h2>Popular Channels</h2>
             <ul class='channel-list'></ul>
         </div>
     </script>
-    <script id='logout-template' type="text/x-handlebars-template">
-        <h1> {%raw -%} {{username}} {%- endraw %}, Do you want to Log out? </h1>
-        <form action="{{url_for('users.logout')}}" method="POST">
-            <input type="submit" class="test">
-        </form>
-    </script>
+
     <script id='explore-channel-template' type="text/x-handlebars-template">
         <h1 id='Channel_Name'></h1>
         <div class = 'channel-container'>
@@ -145,6 +148,12 @@
                 <button class="channel-info-btn"></button>
             </div>
         </div>
+    </script>
+
+    <script id='explore-channel-error-template' type="text/x-handlebars-template">
+        <h1>Error The channel was not found</h1>
+        <p>There will be a funny picture with a animation pic here but i won't worry about it now</p>
+        <a href="{{url_for('main.explore')}}">Go Back To Explore</a>
     </script>
 </body>
 

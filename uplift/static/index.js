@@ -25,7 +25,7 @@ function load_first_page() {
         let source = document.querySelector('#homepage-template').innerHTML;
         let destination = document.querySelector('.page-container');
         destination.innerHTML = source;
-        history.replaceState(document.querySelectorAll('.page-container').innerHTML, '', new_url);
+        history.replaceState(document.querySelector('.page-container').innerHTML, '', new_url);
         let mainNav = document.getElementById('js-menu');
         let navBarToggle = document.getElementById('js-navbar-toggle');
         // creating the active class on the navbar
@@ -187,8 +187,10 @@ function load_first_page() {
         navBarToggle.addEventListener('click', function (event) {
             mainNav.classList.toggle('active');
         });
+        let channel_name = url.split('http://127.0.0.1:5000/explore/channel/').pop();
+        load_channel(channel_name);
         //make a post request 
-        let request = new XMLHttpRequest();
+        /*let request = new XMLHttpRequest();
         let channel_name = url.split('http://127.0.0.1:5000/explore/channel/').pop();
         console.log('THe channel_name is ');
         console.log(channel_name);
@@ -246,6 +248,7 @@ function load_first_page() {
         let submit_data = new FormData();
         submit_data.append('channel_name', channel_name);
         request.send(submit_data);
+        */
     }
     else if (url == "http://127.0.0.1:5000/explore") {
         if (localStorage.getItem('login') == 'true') {
@@ -557,11 +560,13 @@ function form_controll(redirect = null, channel_name = null) {
             else if (form_name == 'logout') {
                 const request = new XMLHttpRequest();
                 request.open('post', "/logout");
-                console.log('The request is about ')
+                console.log('a post request has been opened for /logout');
                 let submit_data = new FormData();
                 submit_data.append('logout', 'I want to logout');
                 localStorage.setItem('login', false);
                 request.send(submit_data);
+                console.log('The post request for logout has been fully sent');
+                location.reload();
 
             }
 
@@ -606,6 +611,15 @@ function login_redirect(route_name) {
 }
 
 function load_channel(channel_name) {
+    let nav_source = document.querySelector('#explore-nav-template').innerHTML;
+    let nav_destination = document.querySelector('nav');
+    nav_destination.innerHTML = nav_source;
+    let mainNav = document.getElementById('js-menu');
+    let navBarToggle = document.getElementById('js-navbar-toggle');
+    // creating the active class on the navbar
+    navBarToggle.addEventListener('click', function (event) {
+        mainNav.classList.toggle('active');
+    });
     let request = new XMLHttpRequest();
     request.open('post', `/explore/channel/${channel_name}`);
     request.onload = () => {
@@ -653,7 +667,12 @@ function load_channel(channel_name) {
         }
         else {
             console.log('There were some errors');
+            console.log('This is rurnning from the load-channel route');
             console.log("The channel doesn't exist");
+            let source = document.querySelector('#explore-channel-error-template').innerHTML;
+            let destination = document.querySelector('.page-container');
+            destination.innerHTML = source;
+            console.log('It is finished');
         }
     }
 
@@ -781,6 +800,7 @@ function explore_load(first_load = null) {
     let submit_data = new FormData();
     submit_data.append('i want data', 'give me data');
     request.send(submit_data);
+
 }
 // for the history api. Getting the back button to work
 window.onpopstate = (event) => {

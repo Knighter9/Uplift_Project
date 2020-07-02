@@ -110,4 +110,5 @@ def logout():
     if request.method == "POST":
         print("This should be firing")
         logout_user()
+        print("The user has been logged out")
         return redirect(url_for("main.index"))
