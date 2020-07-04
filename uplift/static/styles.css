@@ -297,6 +297,7 @@ html,body{
     text-align: center;
     border-radius: 5%;
     background-color: purple;
+    text-decoration: none;
 }
 .channel-list li a{
     text-decoration: none;
@@ -322,6 +323,14 @@ html,body{
     float: right;
 }
 
+.channel-info-container .channel_name {
+    cursor: pointer;
+}
+
+.channel-info-container .channel-info-btn{
+    cursor: pointer;
+}
+
 .joined{
     width: 30px;
     height: 20px;
@@ -340,6 +349,120 @@ html,body{
     text-decoration: none;
     border-radius: 10%;
 }
+
+.channel-post-container{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.channel-post-container .post-container{
+    border: 2px solid black;
+    display: flex;
+    flex-wrap: wrap;
+    width: 98%;
+    margin: 2%;
+    
+}
+
+.channel-post-container .post-container .title{
+    text-align:center;
+    margin: 5px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.channel-post-container .post-container .post-content{
+    margin: 5px;
+    width: 100%;
+    padding: 5px;
+
+}
+
+.channel-post-container .post-container .num_likes{
+    float: right;
+    margin: 5px 5px 5px auto;
+    padding: 5px;
+    order: 5;
+}
+
+.channel-post-container .post-container .num_comments{
+    margin: 5px auto 5px auto;
+    padding: 5px;
+    order: 3;
+}
+
+.channel-post-container .post-container .creater{
+    margin: 5px auto 5px 5px;
+    padding: 5px;
+    font-size: 18px;
+    float: left;
+    border: 1px solid black;
+    border-radius: 20%;  
+}
+
+ .individual-post-container{
+    width: 98%;
+    margin: 1%;
+    display: flex;
+    flex-wrap: wrap;
+    border: 2px solid black;
+
+}
+
+.individual-post-container .title, .post_content{
+    margin: 5px;
+    padding: 5px;
+    width: 100%;
+}
+
+.individual-post-container .num_likes{
+    order: 5;
+    float: right;
+    margin:5px 5px 5px auto;
+    padding: 5px;
+}
+
+.individual-post-container .num_comments{
+    order: 4;
+    margin: 5px auto 5px auto;
+    padding: 5px;
+}
+
+.individual-post-container .creator{
+    margin: 5px auto 5px 5px;
+    padding: 5px;
+    border: 1px solid black;
+    border-radius: 10%;
+    font-size: 18;
+}
+
+.comments-container{
+    width: 98%;
+    margin: 1%;
+    border: 2px solid black;
+    display: flex;
+    flex-wrap: wrap;
+}
+.single-comment-container{
+    width: 100%;
+    padding: 5px;
+    margin: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    border:2px solid red;
+}
+.single-comment-container p{
+    width: 100%;
+}
+
+.single-comment-container span{
+    float: right;
+    margin: 5px 5px 5px auto;
+    padding: 5px;
+}
+
+
+
 /*media queries */
 @media screen and (min-width: 768px){
     .navbar {

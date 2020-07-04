@@ -108,19 +108,60 @@ function load_first_page() {
         */
     }
     else if (url.includes('http://127.0.0.1:5000/login?next=%2Fexplore%2Fchannel%2F')) {
-        //reidrect the user to the login route
-        // grab the name of the channel
-        let channel_name = url.split('http://127.0.0.1:5000/login?next=%2Fexplore%2Fchannel%2F').pop();
-        //set the navbar
-        let nav_source = document.querySelector('#homepage-nav-template').innerHTML;
-        let nav_destination = document.querySelector('nav');
-        nav_destination.innerHTML = nav_source;
-        // display the login form
-        let source = document.querySelector('#login-template').innerHTML;
-        let destination = document.querySelector('.page-container');
-        destination.innerHTML = source;
-        history.replaceState(destination.innerHTML, 'login', 'login');
-        form_controll('explore-channel', channel_name);
+        //redirect the user to the login route
+
+        let data_string = url.split('http://127.0.0.1:5000/login?next=%2Fexplore%2Fchannel%2F').pop();
+
+        let data_list = data_string.split('%2Fposts');
+        let unclean_post_title = data_list[1];
+        console.log(unclean_post_title);
+        let channel_name = data_list[0];
+        console.log(channel_name)
+
+        if (unclean_post_title != null && unclean_post_title != '%2Fposts' && unclean_post_title != "") {
+            console.log('the individual post has been selected');
+            // get the post title
+            let post_title = unclean_post_title.split('%2F').pop();
+            // cleanse the post title
+            let cleansed_post_title = post_title.replace(/%2525/g, " ");
+
+            let source = document.querySelector('#login-template').innerHTML;
+            let destination = document.querySelector('.page-container');
+            destination.innerHTML = source;
+            history.replaceState(destination.innerHTML, 'login', 'login');
+            console.log(channel_name)
+            console.log(cleansed_post_title);
+            // call the form_controll
+            form_controll(redirect = 'individual-post', channel_name = channel_name, oosts = null, individual_post_title = cleansed_post_title);
+        }
+
+        else if (url == `http://127.0.0.1:5000/login?next=%2Fexplore%2Fchannel%2F${channel_name}%2Fposts`) {
+            console.log('The user is trying to access the posts for a channel without being logged in');
+            //set the navbar
+            let nav_source = document.querySelector('#homepage-nav-template').innerHTML;
+            let nav_destination = document.querySelector('nav');
+            nav_destination.innerHTML = nav_source;
+            // display the login form
+            let source = document.querySelector('#login-template').innerHTML;
+            let destination = document.querySelector('.page-container');
+            destination.innerHTML = source;
+            history.replaceState(destination.innerHTML, 'login', 'login');
+            form_controll('explore-channel', channel_name, 'load');
+        }
+        else {
+            let channel_name = url.split('http://127.0.0.1:5000/login?next=%2Fexplore%2Fchannel%2F').pop();
+            //set the navbar
+            let nav_source = document.querySelector('#homepage-nav-template').innerHTML;
+            let nav_destination = document.querySelector('nav');
+            nav_destination.innerHTML = nav_source;
+            // display the login form
+            let source = document.querySelector('#login-template').innerHTML;
+            let destination = document.querySelector('.page-container');
+            destination.innerHTML = source;
+            history.replaceState(destination.innerHTML, 'login', 'login');
+            form_controll('explore-channel', channel_name);
+        }
+
         /*if (localStorage.getItem('login') == 'true') {
             console.log('Looks like you can view the channel info');
             let channel_name = url.split('http://127.0.0.1:5000/login?next=%2Fexplore%2Fchannel%2F').pop();
@@ -177,18 +218,45 @@ function load_first_page() {
         */
     }
     else if (url.includes('http://127.0.0.1:5000/explore/channel/')) {
-        console.log('This should print out in the console');
-        let nav_source = document.querySelector('#explore-nav-template').innerHTML;
-        let nav_destination = document.querySelector('nav');
-        nav_destination.innerHTML = nav_source;
-        let mainNav = document.getElementById('js-menu');
-        let navBarToggle = document.getElementById('js-navbar-toggle');
-        // creating the active class on the navbar
-        navBarToggle.addEventListener('click', function (event) {
-            mainNav.classList.toggle('active');
-        });
+        // check to see if the route contains post
         let channel_name = url.split('http://127.0.0.1:5000/explore/channel/').pop();
-        load_channel(channel_name);
+        channel_name = channel_name.split('/post');
+        channel_name = channel_name[0];
+        console.log(channel_name);
+        if (url == `http://127.0.0.1:5000/explore/channel/${channel_name}/posts`) {
+            console.log('The user wants to access the the posts of a channel');
+            let nav_source = document.querySelector('#explore-nav-template').innerHTML;
+            let nav_destination = document.querySelector('nav');
+            nav_destination.innerHTML = nav_source;
+            let mainNav = document.getElementById('js-menu');
+            let navBarToggle = document.getElementById('js-navbar-toggle');
+            // creating the active class on the navbar
+            navBarToggle.addEventListener('click', function (event) {
+                mainNav.classList.toggle('active');
+            });
+            channel_load_posts(channel_name);
+
+        }
+        else if (url.includes(`http://127.0.0.1:5000/explore/channel/${channel_name}/posts/`)) {
+            console.log('The user wants to see and individual post');
+            let post_title = url.split(`http://127.0.0.1:5000/explore/channel/${channel_name}/posts/`).pop();
+            console.log(post_title);
+            load_indvidual_post(channel_name = channel_name, firs_load = true, post_title = post_title);
+        }
+        else {
+            console.log('This should print out in the console');
+            let nav_source = document.querySelector('#explore-nav-template').innerHTML;
+            let nav_destination = document.querySelector('nav');
+            nav_destination.innerHTML = nav_source;
+            let mainNav = document.getElementById('js-menu');
+            let navBarToggle = document.getElementById('js-navbar-toggle');
+            // creating the active class on the navbar
+            navBarToggle.addEventListener('click', function (event) {
+                mainNav.classList.toggle('active');
+            });
+            channel_name = url.split('http://127.0.0.1:5000/explore/channel/').pop();
+            load_channel(channel_name);
+        }
         //make a post request 
         /*let request = new XMLHttpRequest();
         let channel_name = url.split('http://127.0.0.1:5000/explore/channel/').pop();
@@ -434,7 +502,7 @@ function linking_logic() {
     });
 };
 
-function form_controll(redirect = null, channel_name = null) {
+function form_controll(redirect = null, channel_name = null, posts = null, individual_post_title = null) {
     console.log('The form function has been called');
     const url = window.location.href;
     const form_name = url.split('http://127.0.0.1:5000/').pop();
@@ -524,22 +592,43 @@ function form_controll(redirect = null, channel_name = null) {
                     data = JSON.parse(request.responseText);
                     if (data.success) {
                         localStorage.setItem('login', true);
+                        console.log('The server has sent back data from the login function');
                         if (redirect != null) {
                             if (redirect == 'explore') {
                                 // call the explore load function
                                 explore_load();
                                 //let source = document.querySelector('#explore-template').innerHTML;
                                 //let destination = document.querySelector('.page-container');
-                                //destination.innerHTML = source;
+                                //destination.innerHTML = source;nav
                                 //history.pushState(destination.innerHTML, 'explore', 'explore');
                             }
                             else if (redirect == 'explore-channel') {
                                 console.log('The user wants to access a channel');
-                                if (channel_name != null) {
+                                if (channel_name != null && posts == 'load') {
+                                    console.log('we are going to load the channel and its posts');
+                                    let nav_source = document.querySelector('#explore-nav-template').innerHTML;
+                                    let nav_destination = document.querySelector('nav');
+                                    nav_destination.innerHTML = nav_source;
+                                    let mainNav = document.getElementById('js-menu');
+                                    let navBarToggle = document.getElementById('js-navbar-toggle');
+                                    // creating the active class on the navbar
+                                    navBarToggle.addEventListener('click', function (event) {
+                                        mainNav.classList.toggle('active');
+                                    });
+
+                                    channel_load_posts(channel_name);
+                                }
+                                else if (channel_name != null) {
                                     load_channel(channel_name);
                                 }
 
                             }
+                            else if (redirect == 'individual-post' && individual_post_title != null) {
+                                console.log("The user want's an individual");
+                                // call the load individidual_post
+                                load_indvidual_post(channel_name, first_load = true, post_title = individual_post_title);
+                            }
+
                         }
 
 
@@ -620,6 +709,21 @@ function load_channel(channel_name) {
     navBarToggle.addEventListener('click', function (event) {
         mainNav.classList.toggle('active');
     });
+    console.log('About to select the user profile pic');
+    let user_profile = document.querySelector('.user-profile-pic');
+    console.log(user_profile);
+    user_profile.onclick = () => {
+        console.log('The user profile has been clickedd');
+        let side_nav = document.querySelector('#mySidenav');
+        side_nav.style.width = "250px";
+    }
+
+    let close_btn = document.querySelector('.closebtn');
+    close_btn.onclick = () => {
+        console.log('The close button has been clicked');
+        let side_nav = document.querySelector('#mySidenav');
+        side_nav.style.width = '0px';
+    }
     let request = new XMLHttpRequest();
     request.open('post', `/explore/channel/${channel_name}`);
     request.onload = () => {
@@ -664,6 +768,7 @@ function load_channel(channel_name) {
             }
 
             history.pushState(destination.innerHTML, `/explore/channel/${channel_name}`, `/explore/channel/${channel_name}`)
+            channel_load_posts(channel_name, true);
         }
         else {
             console.log('There were some errors');
@@ -673,14 +778,16 @@ function load_channel(channel_name) {
             let destination = document.querySelector('.page-container');
             destination.innerHTML = source;
             console.log('It is finished');
+            history.pushState(destination.innerHTML, `explore/channel${channel_name}`, `/explore/channel/${channel_name}`);
+
         }
     }
 
     let submit_data = new FormData();
     submit_data.append('channel_name', channel_name);
     request.send(submit_data);
-
 }
+
 /*function explore_load() {
     console.log('The explore function is running');
     let source = document.querySelector('#explore-template').innerHTML;
@@ -801,6 +908,399 @@ function explore_load(first_load = null) {
     submit_data.append('i want data', 'give me data');
     request.send(submit_data);
 
+}
+
+function channel_load_posts(channel_name, load_from_channel_page = null) {
+
+    console.log('The channel load posts function is running');
+    console.log('About to select the user profile pic');
+    let user_profile = document.querySelector('.user-profile-pic');
+    console.log(user_profile);
+    user_profile.onclick = () => {
+        console.log('The user profile has been clickedd');
+        let side_nav = document.querySelector('#mySidenav');
+        side_nav.style.width = "250px";
+    }
+
+    let close_btn = document.querySelector('.closebtn');
+    close_btn.onclick = () => {
+        console.log('The close button has been clicked');
+        let side_nav = document.querySelector('#mySidenav');
+        side_nav.style.width = '0px';
+    }
+
+    if (load_from_channel_page != null) {
+        //select the channel title and load posts if user click on it
+        let channel_title = document.querySelector('.channel_name');
+        //when the user clicks on the title of the channel
+        channel_title.onclick = () => {
+            // run the post ajax call
+            // create the ajax post
+            const request = new XMLHttpRequest();
+            request.open('post', `/explore/channel/${channel_name}/posts`);
+
+            request.onload = () => {
+                console.log('The response has been received');
+                let data = JSON.parse(request.responseText);
+
+                if (data.success) {
+                    console.log('The ajax call for the posts has been successful');
+                    // select the source handlebars template
+                    let source = document.querySelector('#explore-channel-posts-template').innerHTML;
+                    let destination = document.querySelector('.page-container');
+                    destination.innerHTML = source;
+
+                    let all_posts_container = document.querySelector('.channel-post-container');
+                    // get access to the posts
+                    let posts_list = data.posts;
+                    let length = posts_list.length;
+                    for (let i = 0; i < length; i++) {
+                        // create the post container
+                        post_container = document.createElement('div');
+                        post_container.classList.toggle('post-container');
+                        // get the data from the ajax call
+                        let username = posts_list[i]['username'];
+                        let title = posts_list[i]['title'];
+                        let post_content = posts_list[i]['post_content'];
+                        let num_likes = posts_list[i]['num_likes'];
+                        let num_comments = posts_list[i]['num_comments'];
+                        if (num_comments != null) {
+                            console.log(num_comments);
+                        }
+                        else if (num_comments == null) {
+                            num_comments = 0;
+                            console.log(num_comments);
+                        }
+
+                        // create the username span tag
+                        let username_container = document.createElement('span');
+                        username_container.classList.toggle('creater');
+                        username_container.innerHTML = username;
+
+                        // create the title h3 tag
+                        let title_container = document.createElement('h3');
+                        title_container.classList.toggle('title');
+                        title_container.innerHTML = title;
+
+                        // create the num likes p tag
+                        let post_content_container = document.createElement('p');
+                        post_content_container.classList.toggle('post-content');
+                        post_content_container.innerHTML = post_content;
+
+                        // create the num likes span
+                        let num_likes_container = document.createElement('span');
+                        num_likes_container.classList.toggle('num_likes');
+                        num_likes_container.innerHTML = `Likes ${num_likes}`;
+
+                        //create the num comments span
+                        let num_comments_container = document.createElement('span');
+                        num_comments_container.classList.toggle('num_comments');
+                        num_comments_container.innerHTML = `Comments ${num_comments}`
+
+                        // append the data containers to the post container;
+                        post_container.append(title_container);
+                        post_container.append(post_content_container);
+                        post_container.append(num_likes_container);
+                        post_container.append(username_container);
+                        post_container.append(num_comments_container);
+
+                        all_posts_container.append(post_container);
+                    }
+                    // set the source template to be displayed in the main page container
+                    // push a new state to the history api
+                    console.log(channel_name);
+                    history.pushState(destination.innerHTML, `/explore/channel/${channel_name}/posts`, `/explore/channel/${channel_name}/posts`);
+                    load_indvidual_post(channel_name);
+                }
+                else {
+                    console.log('There were some errors retrieving the posts');
+                }
+            }
+            request.send();
+        }
+    }
+    else {
+        const request = new XMLHttpRequest();
+        request.open('post', `/explore/channel/${channel_name}/posts`);
+
+        request.onload = () => {
+            console.log('The response has been received');
+            let data = JSON.parse(request.responseText);
+
+            if (data.success) {
+                console.log('The ajax call for the posts has been successful');
+                // select the source handlebars template
+                let source = document.querySelector('#explore-channel-posts-template').innerHTML;
+                let destination = document.querySelector('.page-container');
+                destination.innerHTML = source;
+
+                let all_posts_container = document.querySelector('.channel-post-container');
+                // get access to the posts
+                let posts_list = data.posts;
+                let length = posts_list.length;
+                for (let i = 0; i < length; i++) {
+                    // create the post container
+                    post_container = document.createElement('div');
+                    post_container.classList.toggle('post-container');
+                    // get the data from the ajax call
+                    let username = posts_list[i]['username'];
+                    let title = posts_list[i]['title'];
+                    let post_content = posts_list[i]['post_content'];
+                    let num_likes = posts_list[i]['num_likes'];
+                    let num_comments = posts_list[i]['num_comments'];
+                    if (num_comments != null) {
+                        console.log(num_comments);
+                    }
+                    else if (num_comments == null) {
+                        num_comments = 0;
+                        console.log(num_comments);
+                    }
+
+                    // create the username span tag
+                    let username_container = document.createElement('span');
+                    username_container.classList.toggle('creater');
+                    username_container.innerHTML = username;
+
+                    // create the title h3 tag
+                    let title_container = document.createElement('h3');
+                    title_container.classList.toggle('title');
+                    title_container.innerHTML = title;
+
+                    // create the num likes p tag
+                    let post_content_container = document.createElement('p');
+                    post_content_container.classList.toggle('post-content');
+                    post_content_container.innerHTML = post_content;
+
+                    // create the num likes span
+                    let num_likes_container = document.createElement('span');
+                    num_likes_container.classList.toggle('num_likes');
+                    num_likes_container.innerHTML = `Likes ${num_likes}`;
+
+                    //create the num comments span
+                    let num_comments_container = document.createElement('span');
+                    num_comments_container.classList.toggle('num_comments');
+                    num_comments_container.innerHTML = `Comments ${num_comments}`
+
+                    // append the data containers to the post container;
+                    post_container.append(title_container);
+                    post_container.append(post_content_container);
+                    post_container.append(num_likes_container);
+                    post_container.append(username_container);
+                    post_container.append(num_comments_container);
+
+                    all_posts_container.append(post_container);
+                }
+                // set the source template to be displayed in the main page container
+                // push a new state to the history api
+                console.log(channel_name);
+
+                history.pushState(destination.innerHTML, `/explore/channel/${channel_name}/posts`, `/explore/channel/${channel_name}/posts`);
+                load_indvidual_post(channel_name);
+            }
+            else {
+                console.log('There were some errors retrieving the posts');
+            }
+        }
+        request.send();
+    }
+}
+
+function load_indvidual_post(channel_name, first_load = null, post_title = null) {
+    if (first_load == true) {
+        let nav_source = document.querySelector('#explore-nav-template').innerHTML;
+        let nav_destination = document.querySelector('nav');
+        nav_destination.innerHTML = nav_source;
+        let mainNav = document.getElementById('js-menu');
+        let navBarToggle = document.getElementById('js-navbar-toggle');
+        // creating the active class on the navbar
+        navBarToggle.addEventListener('click', function (event) {
+            mainNav.classList.toggle('active');
+        });
+        // cleanse the post_title text
+        post_title_text = post_title.replace(/%2525/g, " ");
+        post_title_text = post_title.replace(/%/g, " ");
+        // load the post
+        const request = new XMLHttpRequest();
+
+        request.open('post', `/explore/channel/${channel_name}/posts/${post_title_text}`);
+
+        request.onload = () => {
+            console.log('The ajax call has been answered');
+
+            let data = JSON.parse(request.responseText);
+
+            if (data.success) {
+                console.log('The call was successfull');
+                let comment_list = data.comments;
+                let post_data = data.post_data;
+
+                let length = comment_list.length;
+
+                let source = document.querySelector('#individual-post-template').innerHTML;
+
+                let destination = document.querySelector('.page-container');
+
+                let template = Handlebars.compile(source);
+
+                // get the post data from the ajax call
+                let post_username = post_data['username'];
+                let ajax_post_title = post_data['title'];
+                let post_content = post_data['post_content'];
+                let post_num_comments = post_data['num_comments'];
+                let post_num_likes = post_data['num_likes'];
+
+                // create the context
+
+                let context = {
+                    creator: post_username,
+                    post_title: ajax_post_title,
+                    post_content: post_content,
+                    num_likes: post_num_likes,
+                    num_comments: post_num_comments,
+
+                }
+
+                let html = template(context);
+
+                destination.innerHTML = html;
+
+                console.log("I am about to print the post data");
+                console.log(post_data)
+
+                // select the comments div to put the comments in 
+                let full_comments_container = document.querySelector('.comments-container');
+                //loop for the 
+                for (let i = 0; i < length; i++) {
+                    console.log(comment_list[i]['username'])
+                    console.log(comment_list[i]['comment'])
+                    let username = comment_list[i]['username']
+                    let comment = comment_list[i]['comment']
+
+                    //create the comment container
+                    let single_comment_container = document.createElement('div');
+                    single_comment_container.classList.add('single-comment-container')
+
+                    // create the p to store the comment
+                    let comment_p_tag = document.createElement('p');
+                    comment_p_tag.innerHTML = comment;
+
+                    // create the span to store the username
+                    let username_span_tag = document.createElement('span');
+                    username_span_tag.innerHTML = username;
+
+                    single_comment_container.append(comment_p_tag);
+                    single_comment_container.append(username_span_tag);
+
+                    full_comments_container.append(single_comment_container);
+                }
+                //post_title_text = post_title_text.replace(/ /g, "%");
+                console.log(post_title_text)
+                //push a new history 
+                history.pushState(destination.innerHTML, `/explore/channel/${channel_name}/posts/${post_title_text}`, `/explore/channel/${channel_name}/posts/${post_title_text}`);
+
+            }
+            else {
+                console.log('There were some errors');
+            }
+
+        };
+        // send the request
+        request.send();
+    }
+    else {
+        let post_title = document.querySelector('.title');
+        post_title_text = post_title.innerHTML
+
+        post_title.onclick = () => {
+            console.log('The post has been clicked about to load the post');
+
+            const request = new XMLHttpRequest();
+
+            request.open('post', `/explore/channel/${channel_name}/posts/${post_title_text}`);
+
+            request.onload = () => {
+                console.log('The ajax call has been answered');
+
+                let data = JSON.parse(request.responseText);
+
+                if (data.success) {
+                    console.log('The call was successfull');
+                    let comment_list = data.comments;
+                    let post_data = data.post_data;
+
+                    let length = comment_list.length;
+
+                    let source = document.querySelector('#individual-post-template').innerHTML;
+
+                    let destination = document.querySelector('.page-container');
+
+                    let template = Handlebars.compile(source);
+
+                    // get the post data from the ajax call
+                    let post_username = post_data['username'];
+                    let ajax_post_title = post_data['title'];
+                    let post_content = post_data['post_content'];
+                    let post_num_comments = post_data['num_comments'];
+                    let post_num_likes = post_data['num_likes'];
+
+                    // create the context
+
+                    let context = {
+                        creator: post_username,
+                        post_title: ajax_post_title,
+                        post_content: post_content,
+                        num_likes: post_num_likes,
+                        num_comments: post_num_comments,
+
+                    }
+
+                    let html = template(context);
+
+                    destination.innerHTML = html;
+
+                    console.log("I am about to print the post data");
+                    console.log(post_data)
+
+                    // select the comments div to put the comments in 
+                    let full_comments_container = document.querySelector('.comments-container');
+                    //loop for the 
+                    for (let i = 0; i < length; i++) {
+                        console.log(comment_list[i]['username'])
+                        console.log(comment_list[i]['comment'])
+                        let username = comment_list[i]['username']
+                        let comment = comment_list[i]['comment']
+
+                        //create the comment container
+                        let single_comment_container = document.createElement('div');
+                        single_comment_container.classList.add('single-comment-container')
+
+                        // create the p to store the comment
+                        let comment_p_tag = document.createElement('p');
+                        comment_p_tag.innerHTML = comment;
+
+                        // create the span to store the username
+                        let username_span_tag = document.createElement('span');
+                        username_span_tag.innerHTML = username;
+
+                        single_comment_container.append(comment_p_tag);
+                        single_comment_container.append(username_span_tag);
+
+                        full_comments_container.append(single_comment_container);
+                    }
+                    console.log(post_title_text);
+                    //post_title_text = post_title_text.replace(/ /g, "%");
+                    //push a new history 
+                    history.pushState(destination.innerHTML, `/explore/channel/${channel_name}/posts/${post_title_text}`, `/explore/channel/${channel_name}/posts/${post_title_text}`);
+
+                }
+                else {
+                    console.log('There were some errors');
+                }
+
+            };
+            request.send();
+        }
+    }
 }
 // for the history api. Getting the back button to work
 window.onpopstate = (event) => {

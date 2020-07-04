@@ -49,3 +49,12 @@ class Post(db.Model):
     post_content = db.Column(db.String(40000))
     image_file = db.Column(db.String(128))
     num_likes = db.Column(db.Integer)
+    num_comments = db.Column(db.Integer)
+
+
+class Comments(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    comment = db.Column(db.String(1000), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id"))
+
