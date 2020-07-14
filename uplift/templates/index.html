@@ -77,7 +77,7 @@
         </ul>
     </script>
 
-    <script id='homepage-template' type='text/x-handelbars-template'>
+    <script id='homepage-template' type="text/x-handlebars-template">
         <h1>Welcome to Uplift</h1>
         <p>This will be the homepage information
             Lorem ipsum dolor sit amet consectetur adipisicing elit. 
@@ -91,9 +91,13 @@
              provident reprehenderit dicta incidunt, eos esse, minima quo cupiditate 
              dignis
         </p>
+
+        <img src="../static/kneel-pray.png" alt="picure of man praying">
+        <video src="../static/20200707_104307.mp4" width="600px" height="300px" controls></video>
+        <video src="../file_folder/20200707_104307.mp4" width="600px" height="300px" controls></video>
     </script>
 
-    <script id="register-template" type="text/x-handelbars-template">
+    <script id="register-template" type="text/x-handlebars-template">
 
         <h1>This is the registration form</h1>
         <form class = 'form'>
@@ -114,7 +118,7 @@
         
     </script>
 
-    <script id="login-template" class="form-controll" type="text/x-handelbars-template">
+    <script id="login-template" class="form-controll" type="text/x-handlebars-template">
         <h1>This is the login form</h1>
         <form class = 'form'>
             <div class='login-errors username-errors'></div>
@@ -131,7 +135,7 @@
         </form>
     </script>
 
-    <script id='explore-template' class='form-controll' type='text/x-handelbars-template'>
+    <script id='explore-template' class='form-controll' type='text/x-handlebars-template'>
         <h1>Welcome to the Uplift</h1>
         <div class="channel-container">
             <h2>Popular Channels</h2>
@@ -167,15 +171,70 @@
         <div class="individual-post-container">
             <h3 class="title">{%raw -%} {{post_title}} {%- endraw %}</h3>
             <p class='post_content'>{%raw -%} {{post_content}} {%- endraw %}</p>
-            <span class="num_likes">{%raw -%}{{num_likes}} {%- endraw %} li</span>
+            <span class="num_likes">{%raw -%}{{num_likes}} {%- endraw %} likes</span>
+            <div class="likes-container">
+                <span class="like">Like</span>
+                <span class="dislike">Dislike</span>
+            </div>
             <span class="num_comments">{%raw -%} {{num_comments}} {%- endraw %} comments</span>
             <span class="creator">{%raw -%} {{creator}} {%- endraw %}</span>
+        </div>
+
+        <div class="create-comment-container">
+            <div class="input-comment" contenteditable="true"></div>
+            <!--<button>Cancel</button>
+            <button>Comment</button>
+            -->
+            <span class="cancel-btn comment-buttons">Cancel</span>
+            <span class="comment-btn comment-buttons">Comment</span>
         </div>
 
         <div class="comments-container">
 
         </div>
     </script>
+
+    <script id="create-channel-template" class="form-controll" type="text/x-handlebars-template">
+        <h3 id = create-new-channel>Create a New Channel</h3>
+        <form class="form">
+            <input type="text" placeholder="channel name" id='channel_name'>
+            <label>Channel Purpose</label>
+            <textarea name="" id="channel_description" cols="30" rows="10" ></textarea>
+            <input type="submit">
+        </form>
+    </script>
+
+    <script id="create-post-template" type="text/x-handlebars-template">
+        <h3>Upload a Video</h3>
+        <form class="form">
+            <input type="text" placeholder="title" id = 'title' class="create-post-title">
+            <input type="file" name="file" id='file_upload'>
+            <input type="submit" value=Upload id = 'create-post-submit-btn' class="create-post-submit-btn">
+        </form>
+
+        <!--<form action="/explore/channel/Testimonies/create-new-post" method="post">
+            <input type="text" placeholder="title">
+            <input type="file" name="file" id='file_upload'>
+            <input type="submit" value=Upload id = 'create-post-submit-btn'>
+        </form>
+    -->
+    </script>
+
+    <script id="create-text-post-template" type="text/x-handlebars-template">
+        <form class = "form">
+            <input type="text" placeholder="title" id = "text-title" class="create-post-title">
+            <textarea name="" id="" cols="30" rows="10"></textarea>
+            <input type="submit" value="submit" id = "create-post-text-submit-btn" class="create-post-submit-btn">
+        </form>
+    </script>
+
+    <script id='create-new-post-selector' type="text/x-handlebars-template">
+        <div id="change-type-post">
+            <div id='text-post'>Text-Post</div>
+            <div id = 'video-post'>Video-Post</div>
+        </div>
+    </script>
+
 </body>
 
 </html>

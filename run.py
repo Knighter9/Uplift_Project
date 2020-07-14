@@ -1,5 +1,5 @@
 from uplift import app, db
-from uplift.models import User, Post, Channel, Channel_Members, Comments
+from uplift.models import User, Post, Channel, Channel_Members, Comments, Likes_Dislikes
 
 
 @app.shell_context_processor
@@ -11,4 +11,5 @@ def make_shell_context():
         "Channel_Members": Channel_Members,
         "Post": Post,
         "Comments": Comments,
+        "Likes_Dislikes": Likes_Dislikes,
     }

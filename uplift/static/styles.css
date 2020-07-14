@@ -378,6 +378,42 @@ html,body{
 
 }
 
+.channel-post-container .post-container .video-container{
+    width: 100%;
+    height: 300px;
+}   
+.channel-post-container .post-container .video-container video{
+    width: 60%;
+    height: 200px;
+    margin: 5px auto 5px auto;
+    padding: 5px;
+}
+
+.channel-post-container .post-container .likes-container{
+    margin: 5px;
+    padding: 5px;
+}
+
+.channel-post-container .post-container .likes-container .like{
+    margin: 5px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.channel-post-container .post-container .likes-container .dislike{
+    margin: 5px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.channel-post-container .post-container .likes-container .liked{
+    color:blue;
+}
+
+.channel-post-container .post-container .likes-container .disliked{
+    color: blue;
+}
+
 .channel-post-container .post-container .num_likes{
     float: right;
     margin: 5px 5px 5px auto;
@@ -408,6 +444,26 @@ html,body{
     border: 2px solid black;
 
 }
+.individual-post-container .likes-container{
+    margin: 5px;
+    padding: 5px;
+}
+.individual-post-container .likes-container .like{
+    margin: 5px;
+    padding: 5px;
+    cursor: pointer;
+}
+.individual-post-container .likes-container .dislike{
+    margin: 5px;
+    padding: 5px;
+    cursor: pointer;
+}
+.individual-post-container .likes-container .liked{
+    color: blue;
+}
+.individual-post-container .likes-container .disliked{
+    color: blue;
+}
 
 .individual-post-container .title, .post_content{
     margin: 5px;
@@ -436,6 +492,53 @@ html,body{
     font-size: 18;
 }
 
+.create-comment-container{
+    display: flex;
+    flex-wrap: wrap;
+    width: 98%;
+    margin: 1%;
+}
+
+.create-comment-container .input-comment{
+    /*min-width: 50%;
+    flex:1;*/
+    width: 100%;
+    padding: 5px;
+    margin: 5px;
+    border-bottom: 2px solid black;
+}
+
+.create-comment-container .comment-buttons{
+    display: none;
+    width: 80px;
+    height: 15x;
+    text-align: center;
+    border: 2px solid black;
+    margin:auto 5px auto 5px;
+    padding: 5px;
+    cursor: pointer;
+}
+.create-comment-container .active-span{
+    display: block;
+    float: right;
+    width: 80px;
+    height: 15x;
+    text-align: center;
+    border: 2px solid black;
+    margin:auto 5px auto 5px;
+    padding: 5px;
+    cursor: pointer;
+    
+}
+.create-comment-container button{
+    width: 80px;
+    height: 15px;
+    text-align: center;
+    border: 2px solid black;
+    margin: auto 5px auto 5px;
+    padding: 5px;
+}
+
 .comments-container{
     width: 98%;
     margin: 1%;
@@ -461,6 +564,17 @@ html,body{
     padding: 5px;
 }
 
+#change-type-post{
+    width: 100%;
+}
+
+#change-type-post #text-post{
+    width: 50%;
+}
+#change-type-post #video-post{
+    width: 50%;
+    border-left: 2px solid black;
+}
 
 
 /*media queries */

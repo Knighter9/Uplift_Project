@@ -20,6 +20,11 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesytem"
 Session(app)"""
 
+app.config["testing"] = False
+
+# config the app to user the file_folder videos folder
+app.config["UPLOAD_FOLDER"] = Config.UPLOAD_FOLDER
+
 # app.secret_key = Config.SECRET_KEY
 # creae an engine
 db = SQLAlchemy(app)
@@ -35,7 +40,9 @@ from uplift import models
 from uplift.users.routes import users
 from uplift.main.routes import main
 from uplift.channels.routes import channels
+from uplift.posts.routes import posts
 
 app.register_blueprint(main)
 app.register_blueprint(users)
 app.register_blueprint(channels)
+app.register_blueprint(posts)

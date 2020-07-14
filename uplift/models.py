@@ -48,7 +48,9 @@ class Post(db.Model):
     title = db.Column(db.String(128), nullable=False)
     post_content = db.Column(db.String(40000))
     image_file = db.Column(db.String(128))
+    video_file = db.Column(db.String(128))
     num_likes = db.Column(db.Integer)
+    num_dislikes = db.Column(db.Integer)
     num_comments = db.Column(db.Integer)
 
 
@@ -57,4 +59,15 @@ class Comments(db.Model):
     comment = db.Column(db.String(1000), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     post_id = db.Column(db.Integer, db.ForeignKey("post.id"))
+    num_likes = db.Column(db.Integer)
+    num_dislikes = db.Column(db.Integer)
+    num_replies = db.Column(db.Integer)
+
+
+class Likes_Dislikes(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    like = db.Column(db.Boolean, nullable=False)
+    dislike = db.Column(db.Boolean, nullable=False)
 
