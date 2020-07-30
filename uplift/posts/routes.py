@@ -40,55 +40,102 @@ def create_new_post(channel_name):
     elif request.method == "POST":
         print("This is how the create new post route should work")
 
-        post_title = request.form.get("title")
-        file = request.files.get("file")
-        file.filename = current_user.username + file.filename
+        type_of_post = request.form.get("type")
+        if type_of_post == "video":
 
-        # query the database to see if the channel exists
-        channel = Channel.query.filter_by(channel_name=channel_name).first()
+            post_title = request.form.get("title")
+            file = request.files.get("file")
+            file.filename = current_user.username + file.filename
 
-        if channel:
-            if file.filename != "":
+            # query the database to see if the channel exists
+            channel = Channel.query.filter_by(channel_name=channel_name).first()
 
-                if file and allowed_file(file.filename):
-                    filename = secure_filename(file.filename)
-                    # file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-                    file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+            if channel:
+                if file.filename != "":
 
-                    new_post = Post(
-                        channel_id=channel.id,
-                        user_id=current_user.id,
-                        title=post_title,
-                        video_file=filename,
-                        num_likes=1,
-                        num_comments=0,
-                        num_dislikes=0,
-                    )
+                    if file and allowed_file(file.filename):
+                        filename = secure_filename(file.filename)
+                        # file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+                        file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
 
-                    db.session.add(new_post)
-                    db.session.commit()
+                        new_post = Post(
+                            channel_id=channel.id,
+                            user_id=current_user.id,
+                            title=post_title,
+                            video_file=filename,
+                            num_likes=1,
+                            num_comments=0,
+                            num_dislikes=0,
+                        )
 
-                    newly_created_post = Post.query.filter_by(title=post_title).first()
-                    new_likes_dislikes = Likes_Dislikes(
-                        post_id=newly_created_post.id,
-                        user_id=current_user.id,
-                        like=True,
-                        Dislike=False,
-                    )
+                        db.session.add(new_post)
+                        db.session.commit()
 
-                    db.session.add(new_likes_dislikes)
-                    db.session.commit()
+                        newly_created_post = Post.query.filter_by(
+                            title=post_title
+                        ).first()
+                        new_likes_dislikes = Likes_Dislikes(
+                            post_id=newly_created_post.id,
+                            user_id=current_user.id,
+                            like=True,
+                            dislike=False,
+                        )
 
-                    return jsonify({"success": True})
+                        db.session.add(new_likes_dislikes)
+                        db.session.commit()
 
+                        return jsonify({"success": True})
+
+                else:
+                    return jsonify({"success": False})
+
+                # get the video file from the
             else:
+
                 return jsonify({"success": False})
 
+        elif type_of_post == "text":
+            print("it is a text post")
+            post_title = request.form.get("title")
+            print(post_title)
+            post_content = request.form.get("post_content")
+            print(post_content)
+
+            # query the database to see if the channel exists
+            channel = Channel.query.filter_by(channel_name=channel_name).first()
+
+            if channel:
+
+                new_post = Post(
+                    channel_id=channel.id,
+                    user_id=current_user.id,
+                    title=post_title,
+                    post_content=post_content,
+                    num_likes=1,
+                    num_comments=0,
+                    num_dislikes=0,
+                )
+
+                db.session.add(new_post)
+                db.session.commit()
+
+                newly_created_post = Post.query.filter_by(title=post_title).first()
+                new_likes_dislikes = Likes_Dislikes(
+                    post_id=newly_created_post.id,
+                    user_id=current_user.id,
+                    like=True,
+                    dislike=False,
+                )
+
+                db.session.add(new_likes_dislikes)
+                db.session.commit()
+
+                return jsonify({"success": True})
+
             # get the video file from the
+            else:
 
-        else:
-
-            return jsonify({"success": False})
+                return jsonify({"success": False})
 
 
 @posts.route(

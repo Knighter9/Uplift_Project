@@ -312,7 +312,6 @@ def channel_individual_post(channel_name, post_title):
                 .add_columns(
                     Likes_Dislikes.like,
                     Likes_Dislikes.dislike,
-                    Likes_Dislikes.id,
                     Likes_Dislikes.post_id,
                     Likes_Dislikes.user_id,
                 )
@@ -321,6 +320,8 @@ def channel_individual_post(channel_name, post_title):
 
             if post:
                 print("The post has been found")
+                print(post.id)
+                print("the id of the post should have printed")
 
                 if post.like or post.dislike:
 
@@ -336,10 +337,16 @@ def channel_individual_post(channel_name, post_title):
                             "liked_disliked": "liked",
                         }
                         # query for the channels associated with the post
+                        print(post.id)
                         post_comments = (
                             Comments.query.filter_by(post_id=post.id)
                             .join(User, (User.id == Comments.user_id))
-                            .add_columns(User.username, Comments.comment)
+                            .add_columns(
+                                User.username,
+                                Comments.comment,
+                                Comments.post_id,
+                                Comments.num_replies,
+                            )
                             .all()
                         )
 
@@ -347,9 +354,11 @@ def channel_individual_post(channel_name, post_title):
                             comment_object = {
                                 "username": comment.username,
                                 "comment": comment.comment,
+                                "num_replies": comment.num_replies,
                             }
                             print(comment.username)
                             print(comment.comment)
+                            print(comment.post_id)
 
                             # insert the comment object into the comment list
                             post_comments_list.append(comment_object)
@@ -378,7 +387,9 @@ def channel_individual_post(channel_name, post_title):
                         post_comments = (
                             Comments.query.filter_by(post_id=post.id)
                             .join(User, (User.id == Comments.user_id))
-                            .add_columns(User.username, Comments.comment)
+                            .add_columns(
+                                User.username, Comments.comment, Comments.num_replies
+                            )
                             .all()
                         )
 
@@ -386,6 +397,7 @@ def channel_individual_post(channel_name, post_title):
                             comment_object = {
                                 "username": comment.username,
                                 "comment": comment.comment,
+                                "num_replies": comment.num_replies,
                             }
                             print(comment.username)
                             print(comment.comment)
@@ -415,7 +427,9 @@ def channel_individual_post(channel_name, post_title):
                     post_comments = (
                         Comments.query.filter_by(post_id=post.id)
                         .join(User, (User.id == Comments.user_id))
-                        .add_columns(User.username, Comments.comment)
+                        .add_columns(
+                            User.username, Comments.comment, Comments.num_replies
+                        )
                         .all()
                     )
 
@@ -423,6 +437,7 @@ def channel_individual_post(channel_name, post_title):
                         comment_object = {
                             "username": comment.username,
                             "comment": comment.comment,
+                            "num_replies": comment.num_replies,
                         }
                         print(comment.username)
                         print(comment.comment)

@@ -64,6 +64,21 @@ class Comments(db.Model):
     num_replies = db.Column(db.Integer)
 
 
+class Reply_To_Comments(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    reply = db.Column(db.String(1000), nullable=False)
+    comment_id = db.Column(db.Integer, db.ForeignKey("comments.id"), nullable=False)
+    reply_user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id"))
+
+
+class Reply_To_Reply_Comments(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    reply_to_reply = db.Column(db.String(1000))
+    reply_reply_user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    reply_id = db.Column(db.Integer, db.ForeignKey("reply__to__comments.id"))
+
+
 class Likes_Dislikes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     post_id = db.Column(db.Integer, db.ForeignKey("post.id"))

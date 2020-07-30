@@ -206,14 +206,16 @@ function load_first_page() {
         } else if (url == `http://127.0.0.1:5000/explore/channel/${alter_channel_name}/create-new-post`) {
             console.log('i am loading the create new post')
             load_nav('explore');
-            let source = document.querySelector('#create-post-template').innerHTML;
-            let destination = document.querySelector('.page-container');
+            //let source = document.querySelector('#create-post-template').innerHTML;
+            //let destination = document.querySelector('.page-container');
 
-            destination.innerHTML = source;
+            //destination.innerHTML = source;
+            // load the create post template
+            load_create_post(channel_name = alter_channel_name, first_load = true);
             // call form controll
             console.log('I am about to print the name of the channel and I am doing this now');
             console.log(alter_channel_name);
-            form_controll(redirect = null, channel_name = alter_channel_name);
+            //form_controll(redirect = null, channel_name = alter_channel_name);
 
 
         }
@@ -223,7 +225,7 @@ function load_first_page() {
             console.log(post_title);
             post_title = post_title.replace(/%20/g, " ");
             console.log(post_title);
-            load_indvidual_post(channel_name = channel_name, first_load = true, post_title = post_title);
+            load_individual_post(channel_name = channel_name, first_load = true, post_title = post_title);
 
         }
         else {
@@ -564,41 +566,74 @@ function form_controll(redirect = null, channel_name = null, posts = null, indiv
 }
 
 function create_new_post(channel_name) {
+    console.log('the create new post function has been called');
+
     // select the upload submit button to submit the file
     console.log('The create_new_post function has effectivly been called');
-    // get the title of the post
-    let title = document.querySelector('#title').value;
-    // get the file
-    let file = document.querySelector('#file_upload').files;
-    file = file[0];
-    console.log(typeof (file));
-    // create a new ajax call
-    const request = new XMLHttpRequest();
+    let form = document.querySelector('.form');
+    if (form.classList.contains('video')) {
+        // get the title of the post
+        let title = document.querySelector('#title').value;
+        // get the file
+        let file = document.querySelector('#file_upload').files;
+        file = file[0];
+        console.log(typeof (file));
+        // create a new ajax call
+        const request = new XMLHttpRequest();
 
-    request.open('post', `/explore/channel/${channel_name}/create-new-post`);
+        request.open('post', `/explore/channel/${channel_name}/create-new-post`);
 
-    request.onload = () => {
-        console.log('The ajax call has been recieved');
+        request.onload = () => {
+            console.log('The ajax call has been recieved');
 
-        let data = JSON.parse(request.responseText);
+            let data = JSON.parse(request.responseText);
 
-        if (data.success) {
-            console.log("The server says the ajax call was succesfull");
+            if (data.success) {
+                console.log("The server says the ajax call was succesfull");
+                // select the post container
 
 
 
+            }
+            else {
+                console.log('There were some errors');
+            }
         }
-        else {
-            console.log('There were some errors');
-        }
+
+        let submit_data = new FormData();
+        submit_data.append('file', file);
+        submit_data.append('title', title);
+        submit_data.append('type', 'video');
+        request.send(submit_data);
     }
+    else if (form.classList.contains('text')) {
+        let title = document.querySelector('.title').value;
+        console.log(title);
+        let post_content = document.querySelector('#post-content-input').value;
 
-    let submit_data = new FormData();
-    submit_data.append('file', file);
-    submit_data.append('title', title);
-    request.send(submit_data);
+        const request = new XMLHttpRequest();
 
+        request.open('post', `/explore/channel/${channel_name}/create-new-post`);
 
+        request.onload = () => {
+            console.log('The ajax call has been recieved');
+
+            let data = JSON.parse(request.responseText);
+
+            if (data.success) {
+                console.log("The server says the ajax call was succesfull");
+
+            }
+            else {
+                console.log('There were some errors');
+            }
+        }
+        let submit_data = new FormData()
+        submit_data.append('post_content', post_content);
+        submit_data.append('title', title);
+        submit_data.append('type', 'text');
+        request.send(submit_data);
+    }
 }
 
 function load_channel(channel_name) {
@@ -1004,9 +1039,9 @@ function channel_load_posts(channel_name, load_from_channel_page = null) {
                     // push a new state to the history api
                     console.log(channel_name);
                     history.pushState(destination.innerHTML, `/explore/channel/${channel_name}/posts`, `/explore/channel/${channel_name}/posts`);
-                    //like_dislike();
+                    like_dislike();
                     console.log('calling the load indivdiaul post func');
-                    load_indvidual_post(channel_name);
+                    load_individual_post(channel_name);
                 }
                 else {
                     console.log('There were some errors retrieving the posts');
@@ -1276,9 +1311,9 @@ function channel_load_posts(channel_name, load_from_channel_page = null) {
                 console.log(channel_name);
 
                 history.pushState(destination.innerHTML, `/explore/channel/${channel_name}/posts`, `/explore/channel/${channel_name}/posts`);
-                //like_dislike();
+                like_dislike();
                 console.log('calling the load individual post container');
-                load_indvidual_post(channel_name);
+                load_individual_post(channel_name);
             }
             else {
                 console.log('There were some errors retrieving the posts');
@@ -1288,7 +1323,7 @@ function channel_load_posts(channel_name, load_from_channel_page = null) {
     }
 }
 
-function load_indvidual_post(channel_name, first_load = null, post_title = null) {
+function load_individual_post(channel_name, first_load = null, post_title = null) {
     if (first_load == true) {
         load_nav('explore');
         /*let nav_source = document.querySelector('#explore-nav-template').innerHTML;
@@ -1378,6 +1413,7 @@ function load_indvidual_post(channel_name, first_load = null, post_title = null)
                     console.log(comment_list[i]['comment'])
                     let username = comment_list[i]['username']
                     let comment = comment_list[i]['comment']
+                    let num_replies = comment_list[i]['num_replies'];
 
                     //create the comment container
                     let single_comment_container = document.createElement('div');
@@ -1385,14 +1421,29 @@ function load_indvidual_post(channel_name, first_load = null, post_title = null)
 
                     // create the p to store the comment
                     let comment_p_tag = document.createElement('p');
+                    comment_p_tag.classList.toggle('comment');
                     comment_p_tag.innerHTML = comment;
 
                     // create the span to store the username
                     let username_span_tag = document.createElement('span');
                     username_span_tag.innerHTML = username;
+                    username_span_tag.classList.toggle('comment_creator');
+
+                    // create the span to store the reply
+                    let reply_span_tag = document.createElement('span');
+                    reply_span_tag.innerHTML = 'reply';
+                    reply_span_tag.classList.toggle('reply_span');
+
+                    // create the span to store the num replies
+                    let num_replies_span_tag = document.createElement('span');
+                    num_replies_span_tag.innerHTML = `num replies: ${num_replies}`;
+                    num_replies_span_tag.classList.toggle('num_replies');
 
                     single_comment_container.append(comment_p_tag);
                     single_comment_container.append(username_span_tag);
+                    single_comment_container.append(reply_span_tag);
+                    single_comment_container.append(num_replies_span_tag);
+
 
                     full_comments_container.append(single_comment_container);
                 }
@@ -1401,7 +1452,8 @@ function load_indvidual_post(channel_name, first_load = null, post_title = null)
                 //push a new history
                 history.pushState(destination.innerHTML, `/explore/channel/${channel_name}/posts/${ajax_post_title}`, `/explore/channel/${channel_name}/posts/${ajax_post_title}`);
                 like_dislike(load_indvidual_post = true);
-                comment_on_post();
+                comment_on_post(channel_name, post_title = post_title);
+                reply_to_comment(channel_name, post_title = post_title);
 
             }
             else {
@@ -1413,6 +1465,132 @@ function load_indvidual_post(channel_name, first_load = null, post_title = null)
         request.send();
     }
     else {
+        let post_title = document.getElementsByClassName('title');
+        let length = post_title.length;
+
+        for (let i = 0; i < length; i++) {
+            post_title[i].onclick = () => {
+
+                console.log('The post has been clicked about to load the post');
+
+                let post_title_text = post_title[i].innerHTML;
+
+                const request = new XMLHttpRequest();
+
+                request.open('post', `/explore/channel/${channel_name}/posts/${post_title_text}`);
+
+                request.onload = () => {
+                    console.log('The ajax call has been answered');
+
+                    let data = JSON.parse(request.responseText);
+
+                    if (data.success) {
+                        console.log('The call was successfull');
+                        let comment_list = data.comments;
+                        let post_data = data.post_data;
+
+                        let length = comment_list.length;
+
+                        let source = document.querySelector('#individual-post-template').innerHTML;
+
+                        let destination = document.querySelector('.page-container');
+
+                        let template = Handlebars.compile(source);
+
+                        // get the post data from the ajax call
+                        let post_username = post_data['username'];
+                        let ajax_post_title = post_data['title'];
+                        let post_content = post_data['post_content'];
+                        let post_num_comments = post_data['num_comments'];
+                        let post_num_likes = post_data['num_likes'];
+                        let liked_disliked = post_data['liked_disliked'];
+
+                        // create the context
+                        let context = {
+                            creator: post_username,
+                            post_title: ajax_post_title,
+                            post_content: post_content,
+                            num_likes: post_num_likes,
+                            num_comments: post_num_comments,
+
+                        }
+
+                        let html = template(context);
+
+                        destination.innerHTML = html;
+
+                        // set up the like dislike buttons
+                        if (liked_disliked == 'liked') {
+                            document.querySelector('.like').classList.toggle('liked');
+                        }
+                        else if (liked_disliked == 'disliked') {
+                            document.querySelector('.dislike').classList.toggle('disliked');
+                        }
+
+                        console.log("I am about to print the post data");
+                        console.log(post_data)
+
+                        // select the comments div to put the comments in
+                        let full_comments_container = document.querySelector('.comments-container');
+                        //loop for the
+                        for (let i = 0; i < length; i++) {
+                            console.log(comment_list[i]['username'])
+                            console.log(comment_list[i]['comment'])
+                            let username = comment_list[i]['username']
+                            let comment = comment_list[i]['comment']
+                            let num_replies = comment_list[i]['num_replies'];
+
+                            //create the comment container
+                            let single_comment_container = document.createElement('div');
+                            single_comment_container.classList.add('single-comment-container')
+
+                            // create the p to store the comment
+                            let comment_p_tag = document.createElement('p');
+                            comment_p_tag.classList.toggle('comment');
+                            comment_p_tag.innerHTML = comment;
+
+                            // create the span to store the username
+                            let username_span_tag = document.createElement('span');
+                            username_span_tag.classList.toggle('comment_creator');
+                            username_span_tag.innerHTML = username;
+
+                            // create the span for the reply text
+                            let reply_span_tag = document.createElement('span');
+                            reply_span_tag.innerHTML = 'reply';
+                            reply_span_tag.classList.toggle('reply_span');
+
+                            // create the span to store the num replies
+                            let num_replies_span_tag = document.createElement('span');
+                            num_replies_span_tag.innerHTML = `num replies: ${num_replies}`;
+                            num_replies_span_tag.classList.toggle('num_replies');
+
+                            single_comment_container.append(comment_p_tag);
+                            single_comment_container.append(username_span_tag);
+                            single_comment_container.append(reply_span_tag);
+                            single_comment_container.append(num_replies_span_tag);
+
+                            full_comments_container.append(single_comment_container);
+                        }
+                        console.log(post_title_text);
+                        //post_title_text = post_title_text.replace(/ /g, "%");
+                        console.log(post_title_text);
+                        //push a new history
+                        history.pushState(destination.innerHTML, `/explore/channel/${channel_name}/posts/${ajax_post_title}`, `/explore/channel/${channel_name}/posts/${ajax_post_title}`);
+                        like_dislike(load_indvidual_post = true);
+                        comment_on_post(channel_name, post_title = post_title_text);
+                        reply_to_comment(channel_name, post_title = post_title_text);
+                    }
+                    else {
+                        console.log('There were some errors');
+                    }
+
+                };
+
+                request.send();
+
+            }
+        }
+        /*
         let post_title = document.querySelector('.title');
         post_title_text = post_title.innerHTML
 
@@ -1515,9 +1693,11 @@ function load_indvidual_post(channel_name, first_load = null, post_title = null)
             };
             request.send();
         }
+        */
     }
+
 }
-function comment_on_post() {
+function comment_on_post(channel_name, post_title) {
     console.log('The comment on post function is running');
 
     // select the comment button
@@ -1540,8 +1720,26 @@ function comment_on_post() {
 
         }
     }
-
     let cancle_btn = document.querySelector('.cancel-btn');
+    let comment_btn = document.querySelector('.comment-btn');
+
+    // check to see if the user has entered text into to input container
+    comment_input.addEventListener('keyup', (event) => {
+        // check to see if the comment input container has text in it
+        let text = comment_input.innerText;
+
+        text_length = text.trim().length;
+
+        if (text == '' || text == null || text_length == 0) {
+            console.log("The user still can't comment");
+            // check to see if the comment_btn is disabled
+            comment_btn.disabled = true;
+        }
+        else {
+            // make the comment button active
+            comment_btn.disabled = false;
+        }
+    })
 
     cancle_btn.onclick = () => {
         console.log('A cancel the comment');
@@ -1552,90 +1750,612 @@ function comment_on_post() {
             buttons[i].classList.toggle('active-span');
         }
 
-        // reset the comment div field
+        // disable the comment button
+        comment_btn.disabled = true;
 
+        // reset the comment div field
         comment_input.innerHTML = '';
     }
+
+
+    comment_btn.onclick = () => {
+        console.log('the comment button was clicked');
+        // check to see if there is text in the comment field
+        let comment = comment_input.innerText;
+
+        if (comment == '' || comment == null) {
+            console.log("You can't submit a empty comment");
+        }
+        else {
+            console.log('We can submit this comment button to the server');
+
+            const request = new XMLHttpRequest();
+
+            request.open('post', `/explore/channel/${channel_name}/posts/${post_title}/create-comment`);
+
+            request.onload = () => {
+                console.log('The server has sent back data from the server call');
+                let data = JSON.parse(request.responseText);
+
+                if (data.success) {
+                    console.log('The ajax call has been succesfull');
+                    console.log('The comment has been created');
+                }
+                else {
+                    console.log("The ajax call wasn't succesfull");
+                }
+            }
+
+            let submit_data = new FormData();
+            console.log(comment);
+            submit_data.append('comment', comment);
+            request.send(submit_data);
+        }
+    }
 }
-function load_create_post() {
-    console.log('I am going to load the create post');
+function reply_to_comment(channel_name) {
+    console.log('The reply to comment function is running');
 
-    let create_new_post_header = document.getElementById('create-new-post-selector');
-    let destination = document.querySelector('.page-container');
+    //select the reply span
+    let reply_btns = document.getElementsByClassName('reply_span');
+    let comments = document.getElementsByClassName('comment');
+    let comment_creator = document.getElementsByClassName('comment_creator');
+    let comment_container = document.getElementsByClassName('single-comment-container');
+    let num_replies_spans = document.getElementsByClassName('num_replies');
+    let length = reply_btns.length;
 
-    destination.innerHTML = create_new_post_header;
+    for (let i = 0; i < length; i++) {
+        reply_btns[i].onclick = () => {
+            console.log("The reply to comment button was clicked");
+            let comment = comments[i].innerHTML;
+            let creator = comment_creator[i].innerHTML;
+            console.log(comment);
+            console.log(creator);
 
-    let default_post = document.querySelector('create-post-template');
+            // remove all of the previous open comment container
+            let open_reply_to_comments = document.getElementsByClassName('reply-to-comment');
 
-    let active_post = create_new_post_header.querySelector('#video-post');
+            if (open_reply_to_comments.length != 0) {
+                let length = open_reply_to_comments.length;
+                for (let i = 0; i < length; i++) {
+                    open_reply_to_comments[i].remove();
+                }
+            }
+            //create the comment container
+            let reply_to_comment_container = document.createElement('div');
+            reply_to_comment_container.classList.toggle('reply-to-comment');
+            // create the cancel button
+            let cancel_btn = document.createElement('button');
+            cancel_btn.classList.toggle('reply-to-comment-cancel-btn');
+            cancel_btn.innerHTML = 'cancel'
+            // create the comment button
+            let comment_btn = document.createElement('button');
+            comment_btn.classList.toggle('reply-to-comment-comment-btn');
+            comment_btn.innerHTML = 'comment';
+            comment_btn.disabled = true;
+            // create the comment input field
+            let comment_input = document.createElement('textarea');
+            comment_input.classList.toggle('reply-to-comment-input');
 
-    active_post.classList.toggle('active-post-template');
+            //add the elements to the comment div
+            reply_to_comment_container.append(comment_input);
+            reply_to_comment_container.append(comment_btn);
+            reply_to_comment_container.append(cancel_btn);
 
-    destination.append(default_post);
+            // add the add comment container to the html document
+            comment_container[i].insertAdjacentElement('afterEnd', reply_to_comment_container);
+
+            // select the cancel button
+            let new_cancel_btn = document.querySelector('.reply-to-comment-cancel-btn');
+            // select the input field
+            let input_field = document.querySelector('.reply-to-comment-input');
+            // select the comment button
+            let new_comment_btn = document.querySelector('.reply-to-comment-comment-btn');
+
+            // when the cancel button is clicked
+            new_cancel_btn.onclick = () => {
+                console.log('you clicked the cancel button');
+                // remove the reply to comment container
+                let remove_comment = document.querySelector('.reply-to-comment');
+                remove_comment.remove();
+            }
+
+            // add an event listener for the input field to see if there is text in it
+            input_field.addEventListener('keyup', (event) => {
+                // check to see if the comment input container has text in it
+                let text = input_field.value;
+
+                text_length = text.trim().length;
+
+                if (text == '' || text == null || text_length == 0) {
+                    console.log("The user still can't comment");
+                    // check to see if the comment_btn is disabled
+                    comment_btn.disabled = true;
+                }
+                else {
+                    // make the comment button active
+                    comment_btn.disabled = false;
+                }
+            })
+
+            // when the comment button is clicked
+            new_comment_btn.onclick = () => {
+                console.log('The comment button has been clicked');
+                post_title = document.querySelector('.title');
+                post_title = post_title.innerHTML;
+                // get the reply comment from the input field
+                let reply = input_field.value;
+                // create the ajax call\
+                const request = new XMLHttpRequest();
+
+                request.open('post', `/explore/channel/${channel_name}/posts/${post_title}/reply-to-comment`);
+
+                request.onload = () => {
+                    console.log('The ajax call has been set back')
+
+                    let data = JSON.parse(request.responseText);
+
+                    if (data.success) {
+                        console.log('The ajax call was a success');
+                    }
+                    else {
+                        console.log('There were some errors');
+                    }
+                }
+
+                let submit_data = new FormData();
+                submit_data.append('comment', comment);
+                submit_data.append('comment_creator', creator);
+                submit_data.append('reply', reply);
+                request.send(submit_data);
+            }
+        }
+        num_replies_spans[i].onclick = () => {
+            let comment = comments[i].innerHTML;
+            let creator = comment_creator[i].innerHTML;
+            let post_title = document.querySelector('.title');
+            post_title = post_title.innerHTML;
+            console.log('the num replies button was clicked');
+
+            // create new ajax call
+            const request = new XMLHttpRequest();
+
+            request.open('post', `/explore/channel/${channel_name}/posts/${post_title}/get-sub-comments`);
+
+            request.onload = () => {
+                console.log('the ajax call has been sent succesfully');
+
+                let data = JSON.parse(request.responseText);
+
+                if (data.success) {
+                    console.log('The ajax call has received a true success response from the server');
+                    let reply_comment_list = data.reply_comment_list;
+                    length = reply_comment_list.length;
+                    let comments_container = document.querySelector('.comments-container');
+                    comments_container.innerHTML = '';
+
+                    // create the orginal comment that people have replied to
+                    let og_comment_container = document.createElement('div');
+                    og_comment_container.classList.toggle('original-comment-container');
+
+                    // create the p to store the comment
+                    let og_comment = document.createElement('p');
+                    og_comment.classList.toggle('og-comment');
+                    og_comment.innerHTML = comment;
+
+                    // create the span to store the og comment creator
+                    let og_comment_creator = document.createElement('span');
+                    og_comment_creator.classList.toggle('og-comment-creator');
+                    og_comment_creator.innerHTML = creator;
+
+                    // append the comment and the span tag to the og comment container
+                    og_comment_container.append(og_comment);
+                    og_comment_container.append(og_comment_creator);
+
+                    // append the og comment container to the comments container
+
+                    comments_container.append(og_comment_container);
 
 
+                    for (let i = 0; i < length; i++) {
+                        // get the reply comment
+                        let reply = reply_comment_list[i].reply;
+                        let replying_to = reply_comment_list[i].replying_to;
+
+                        replying_to = `@${replying_to} `;
+
+                        // create a span for the user_handle 
+                        let user_handle = document.createElement('strong');
+                        user_handle.classList.toggle('user-handle');
+                        user_handle.innerHTML = replying_to;
+
+                        // create the span to store the comment
+                        let span_comment = document.createElement('strong');
+                        span_comment.classList.toggle('comment');
+                        span_comment.classList.add('comment-span');
+                        span_comment.innerHTML = reply;
+
+                        // create a paragraph for the reply comment
+                        let p = document.createElement('p');
+                        p.classList.toggle('comment-p-tag');
+                        p.append(span_comment);
+                        p.append(user_handle);
+
+                        // get the creator of the reply comment
+                        let reply_creator = reply_comment_list[i].username;
+
+                        // create a span for the reply-creator
+                        let span = document.createElement('span');
+                        span.classList.toggle('creator')
+                        span.innerHTML = reply_creator;
+
+                        // create the single comment container
+                        let single_comment_container = document.createElement('div');
+                        single_comment_container.classList.toggle('single-comment-container');
+
+                        // create a tag for the user to intiate a reply to the comment
+                        let reply_tag = document.createElement('span');
+                        reply_tag.classList.toggle('sub_comments_reply');
+                        reply_tag.innerHTML = 'reply';
+
+                        // append the reply comment to the container
+                        single_comment_container.append(p);
+
+                        // append the creator of the comment container
+                        single_comment_container.append(span);
+
+                        // append the reply_tag to the comment container
+                        single_comment_container.append(reply_tag);
+
+                        console.log(single_comment_container);
+
+                        // append the single comment container to the comments_container
+                        console.log(comments_container);
+                        comments_container.append(single_comment_container);
+                    }
+                    reply_to_reply_comment(channel_name);
+
+                }
+                else {
+                    console.log('there were some errors on the ajax call');
+                }
+            }
+            let submit_data = new FormData();
+            submit_data.append('comment', comment);
+            submit_data.append('creator', creator);
+            request.send(submit_data);
+        }
+    }
 }
 
-function switch_post_template() {
-    let text_post = document.queryselector("#text-post");
-    let video_post = document.querySelector('#video_post');
+function reply_to_reply_comment(channel_name) {
+    console.log('the reply to reply comment button has been clicked');
+    let comment_container = document.getElementsByClassName('single-comment-container');
+    let reply_btns = document.getElementsByClassName('sub_comments_reply');
+    comments = document.getElementsByClassName('comment');
+    creators = document.getElementsByClassName('creator');
+
+
+
+    let length = reply_btns.length;
+
+    for (let i = 0; i < length; i++) {
+        console.log(i);
+        reply_btns[i].onclick = () => {
+            let comment = comments[i];
+            comment = comment.innerHTML;
+            // extract the comment from the @ tag
+            let creator = creators[i];
+            creator = creator.innerHTML;
+            let og_comment = document.querySelector('.og-comment');
+            og_comment = og_comment.innerHTML;
+            let og_comment_creator = document.querySelector('.og-comment-creator');
+            og_comment_creator = og_comment_creator.innerHTML;
+            console.log('The user has clicked on the reply to reply function');
+            console.log(comment);
+            console.log(creator);
+            // load the comment input field
+
+            let open_reply_to_comments = document.getElementsByClassName('reply-to-commnet');
+
+            if (open_reply_to_comments.length != 0) {
+                let length = open_reply_to_comments.length;
+                for (let i = 0; i < length; i++) {
+                    open_reply_to_comments[i].remove();
+                }
+            }
+
+            // create the comment container
+            let reply_to_comment_container = document.createElement('div');
+            reply_to_comment_container.classList.toggle('reply-to-comment');
+
+            // create the cancel button
+            // create the cancel button
+            let cancel_btn = document.createElement('button');
+            cancel_btn.classList.toggle('reply-to-comment-cancel-btn');
+            cancel_btn.innerHTML = 'cancel'
+            // create the comment button
+            let comment_btn = document.createElement('button');
+            comment_btn.classList.toggle('reply-to-comment-comment-btn');
+            comment_btn.innerHTML = 'comment';
+            comment_btn.disabled = true;
+            // create the comment input field
+            let comment_input = document.createElement('textarea');
+            comment_input.classList.toggle('reply-to-comment-input');
+
+            //add the elements to the comment div
+            reply_to_comment_container.append(comment_input);
+            reply_to_comment_container.append(comment_btn);
+            reply_to_comment_container.append(cancel_btn);
+
+            // add the add comment container to the html document
+            comment_container[i].insertAdjacentElement('afterEnd', reply_to_comment_container);
+
+            // select the cancel button
+            let new_cancel_btn = document.querySelector('.reply-to-comment-cancel-btn');
+            // select the input field
+            let input_field = document.querySelector('.reply-to-comment-input');
+            // select the comment button
+            let new_comment_btn = document.querySelector('.reply-to-comment-comment-btn');
+
+            // when the cancel button is clicked
+            new_cancel_btn.onclick = () => {
+                console.log('you clicked the cancel button');
+                // remove the reply to comment container
+                let remove_comment = document.querySelector('.reply-to-comment');
+                remove_comment.remove();
+            }
+
+            // add an event listener for the input field to see if there is text in it
+            input_field.addEventListener('keyup', (event) => {
+                // check to see if the comment input container has text in it
+                let text = input_field.value;
+
+                text_length = text.trim().length;
+
+                if (text == '' || text == null || text_length == 0) {
+                    console.log("The user still can't comment");
+                    // check to see if the comment_btn is disabled
+                    comment_btn.disabled = true;
+                }
+                else {
+                    // make the comment button active
+                    comment_btn.disabled = false;
+                }
+            })
+
+            new_comment_btn.onclick = () => {
+                console.log('The comment button has been clicked');
+
+                post_title = document.querySelector('.title');
+                post_title = post_title.innerHTML;
+
+                let reply = input_field.value;
+
+                const request = new XMLHttpRequest();
+
+                request.open('post', `/explore/channel/${channel_name}/posts/${post_title}/reply-to-reply-comment`);
+
+                request.onload = () => {
+                    console.log('The ajax call has been set back');
+
+                    let data = JSON.parse(request.responseText);
+
+                    if (data.success) {
+                        console.log('The ajax call was a success');
+
+                    }
+                    else {
+                        console.log('There were some errors');
+                    }
+
+                }
+
+                let submit_data = new FormData();
+
+                submit_data.append('comment', comment);
+                submit_data.append('comment_creator', creator);
+                submit_data.append('reply', reply);
+                submit_data.append('og_comment', og_comment);
+                submit_data.append('og_comment_creator', og_comment_creator);
+                request.send(submit_data);
+
+            }
+
+
+        }
+
+    }
+}
+function load_create_post(channel_name, first_load = null) {
+    if (first_load == true) {
+        console.log('I am going to load the create post');
+        /*
+        let post_template = document.querySelector('#create-video-post-template').innerHTML;
+
+        let destination = document.querySelector('.page-container');
+
+        destination.innerHTML = post_template;
+
+        // set the active class on the post-template
+        */
+
+        let change_post_type_menu = document.getElementById('create-new-post-selector').innerHTML;
+        let destination = document.querySelector('.page-container');
+
+        destination.innerHTML = change_post_type_menu;
+
+        let active_post = document.querySelector('#video-post');
+
+        active_post.classList.toggle('active-post-template');
+
+        let default_post = document.querySelector('#create-video-post-template').innerHTML;
+
+        destination.insertAdjacentHTML('beforeend', default_post);
+
+        history.replaceState(destination.innerHTML, `/explore/channel/${channel_name}/create-new-post`, `/explore/channel/${channel_name}/create-new-post`);
+        form_controll(redirect = null, channel_name = channel_name);
+        switch_post_template(channel_name);
+    }
+    else {
+        console.log('I am going to load the create post');
+        let change_post_type_menu = document.getElementById('create-new-post-selector').innerHTML;
+        let destination = document.querySelector('.page-container');
+
+        destination.innerHTML = change_post_type_menu;
+
+        let active_post = document.querySelector('#video-post');
+
+        active_post.classList.toggle('active-post-template');
+
+        let default_post = document.querySelector('#create-video-post-template').innerHTML;
+
+        destination.insertAdjacentHTML('beforeend', default_post);
+
+        history.replaceState(destination.innerHTML, `/explore/channel/${channel_name}/create-new-post`, `/explore/channel/${channel_name}/create-new-post`);
+        form_controll(redirect = null, channel_name = channel_name);
+        switch_post_template(channel_name);
+    }
+}
+
+function switch_post_template(channel_name) {
+    let text_post = document.querySelector("#text-post");
+    let video_post = document.querySelector('#video-post');
 
     let destination = document.querySelector('.post-container');
 
     text_post.onclick = () => {
         console.log('The text post button was clicked');
-        if (this.classList.contains('active-post-template')) {
+
+        console.log('changing the template');
+        // select the new template
+        let new_post_template = document.querySelector('#create-text-post-template').innerHTML;
+
+        // remove the current form
+        let current_post_template = document.querySelector('.post-template-container');
+        current_post_template.remove();
+        // append the new text_post_template
+        destination = document.querySelector('.page-container');
+
+        destination.insertAdjacentHTML('beforeend', new_post_template);
+
+        // set txt as the active class
+        text_post.classList.toggle('active-post-template');
+
+        // remove the active class from the video
+        video_post.classList.toggle('active-post-template');
+
+        // push to the history api
+        history.pushState(destination.innerHTML, `/explore/channel/${channel_name}/create-new-post`, `/explore/channel/${channel_name}/create-new-post`);
+
+        form_controll(redirect = null, channel_name = channel_name);
+
+        //switch_post_template(channel_name);
+        /*
+        if (text_post.classList.contains('active-post-template')) {
             console.log('The text-post is already the active one');
         }
         else if (video_post.classList.contains('active-post-template')) {
             console.log('changing the template');
-            let current_post_template = document.querySelector('#create-post-template');
-            let new_post_template = document.querySelector('#create-text-post-template');
+            // select the new template
+            let new_post_template = document.querySelector('#create-text-post-template').innerHTML;
 
-            // remove the video post_template
+            // remove the current form
+            let current_post_template = document.querySelector('.post-template-container');
             current_post_template.remove();
-
             // append the new text_post_template
-            destination.append(new_post_template)
+            destination = document.querySelector('.page-container');
+
+            destination.insertAdjacentHTML('afterend', new_post_template);
 
             // set txt as the active class
             text_post.classList.toggle('active-post-template');
+
+            // remove the active class from the video
+            video_post.classList.toggle('active-post-template');
+
+            // push to the history api
+            history.pushState(destination.innerHTML, `/explore/channel/${channel_name}/create-new-post`, `/explore/channel/${channel_name}/create-new-post`);
+
+            //switch_post_template(channel_name);
+
         }
+        */
     }
     video_post.onclick = () => {
-        console.log('the video post button was clicked');
-        if (this.classList.contains('active-post-template')) {
+        console.log('changing the template');
+        // select the new template
+        let new_post_template = document.querySelector('#create-video-post-template').innerHTML;
+
+        // remove the current form
+        let current_post_template = document.querySelector('.post-template-container');
+        current_post_template.remove();
+        // append the new text_post_template
+        destination = document.querySelector('.page-container');
+
+        destination.insertAdjacentHTML('beforeend', new_post_template);
+
+        // set txt as the active class
+        video_post.classList.toggle('active-post-template');
+
+        // remove the active class from the video
+        text_post.classList.toggle('active-post-template');
+
+        // push to the history api
+        history.pushState(destination.innerHTML, `/explore/channel/${channel_name}/create-new-post`, `/explore/channel/${channel_name}/create-new-post`);
+        form_controll(redirect = null, channel_name = channel_name);
+        //switch_post_template(channel_name);
+        /*console.log('the video post button was clicked');
+        if (text_post.classList.contains('active-post-template')) {
             console.log('the video post template is already active');
 
         }
         else if (text_post.classList.contains('active-post-template')) {
-            let current_post_template = document.querySelector('#create-text-post-template');
 
-            let new_post_template = document.querySelector('#create-post-template');
+            console.log('changing the template');
+            // select the new template
+            let new_post_template = document.querySelector('#create-video-post-template').innerHTML;
 
+            // remove the current form
+            let current_post_template = document.querySelector('.post-template-container');
             current_post_template.remove();
+            // append the new text_post_template
+            destination = document.querySelector('.page-container');
 
-            destination.append(new_post_template);
+            destination.insertAdjacentHTML('afterend', new_post_template);
 
+            // set txt as the active class
             video_post.classList.toggle('active-post-template');
+
+            // remove the active class from the video
+            text_post.classList.toggle('active-post-template');
+
+            // push to the history api
+            history.pushState(destination.innerHTML, `/explore/channel/${channel_name}/create-new-post`, `/explore/channel/${channel_name}/create-new-post`);
+            //switch_post_template(channel_name);
         }
+    }
+    */
     }
 }
 
 function like_dislike(load_indvidual_post = null) {
     if (load_indvidual_post != null) {
+        console.log('this is the like dislike for the load_individual_post');
         let like_btn = document.querySelector('.like');
         let dislike_btn = document.querySelector('.dislike');
-        let post_title = document.querySelector('.title');
+        let post_title = document.querySelector('.title').innerHTML;
 
 
         like_btn.onclick = () => {
+            console.log('The like button was clicked');
             const request = new XMLHttpRequest();
 
             request.open('post', `/${post_title}/like_dislike/like`)
 
             request.onload = () => {
                 console.log('The ajax call has been sent back');
+                let data = JSON.parse(request.responseText);
                 // check to see if the 
                 // make the like button 
                 if (data.success) {
@@ -1656,9 +2376,12 @@ function like_dislike(load_indvidual_post = null) {
                     console.log('The were some errors');
                 }
             }
+
+            request.send();
         }
 
         dislike_btn.onclick = () => {
+            console.log('The dislike button was clicked');
             const request = new XMLHttpRequest();
 
             request.open('post', `/${post_title}/like_dislike/dislike`)
@@ -1883,9 +2606,30 @@ function load_template_func(template_name, nav_name, force_login = null) {
 window.onpopstate = (event) => {
     console.log('The window pop state has been fired');
     page = document.querySelector('.page-container');
-    console.log('The event state data');
+    console.log(location.href);
     console.log(event.state);
-    page.innerHTML = event.state;
+    let url = location.href;
+    if (url.includes('http://127.0.0.1:5000/explore/channel/')) {
+        console.log('the url still includes a channel')
+        let channel_name = url.split('http://127.0.0.1:5000/explore/channel/').pop();
+        console.log(channel_name)
+        if (channel_name.includes('/posts')) {
+            console.log('here we would call the like post function as well as the load_individual_post function');
+            page.innerHTML = event.state;
+            channel_name = channel_name.split('/posts')[0]
+            console.log('litty');
+            console.log(channel_name)
+            load_individual_post(channel_name);
+        }
+        else {
+            console.log('here we would call the load channel posts function');
+            page.innerHTML = event.state;
+            channel_load_posts(channel_name, true)
+        }
+    }
+    else {
+        page.innerHTML = event.state;
+    }
 }
 
 

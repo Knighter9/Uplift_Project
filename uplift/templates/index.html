@@ -185,8 +185,10 @@
             <!--<button>Cancel</button>
             <button>Comment</button>
             -->
-            <span class="cancel-btn comment-buttons">Cancel</span>
-            <span class="comment-btn comment-buttons">Comment</span>
+            <!--<span class="cancel-btn comment-buttons">Cancel</span>
+            <span class="comment-btn comment-buttons">Comment</span>-->
+            <button class="cancel-btn comment-buttons">Cancel</button>
+            <button class="comment-btn comment-buttons default button" disabled>Comment</button>
         </div>
 
         <div class="comments-container">
@@ -204,29 +206,56 @@
         </form>
     </script>
 
-    <script id="create-post-template" type="text/x-handlebars-template">
-        <h3>Upload a Video</h3>
-        <form class="form">
+    <!--<script id="create-video-post-template" type="text/x-handlebars-template">
+        <div class="create-post-template">
+            <div id="change-type-post">
+                <div id='text-post'>Text-Post</div>
+                <div id = 'video-post'>Video-Post</div>
+            </div>
+            <h3>Upload a Video</h3>
+            <form class="form">
+                <input type="text" placeholder="title" id = 'title' class="create-post-title">
+                <input type="file" name="file" id='file_upload'>
+                <input type="submit" value=Upload id = 'create-post-submit-btn' class="create-post-submit-btn">
+            </form>
+        </div>
+    </script>
+-->
+    <script id="create-video-post-template" type="text/x-handlebars-template">
+        <div class="post-template-container">
+            <h3>Upload a Video</h3>
+            <form class="form video">
             <input type="text" placeholder="title" id = 'title' class="create-post-title">
             <input type="file" name="file" id='file_upload'>
             <input type="submit" value=Upload id = 'create-post-submit-btn' class="create-post-submit-btn">
-        </form>
-
-        <!--<form action="/explore/channel/Testimonies/create-new-post" method="post">
-            <input type="text" placeholder="title">
-            <input type="file" name="file" id='file_upload'>
-            <input type="submit" value=Upload id = 'create-post-submit-btn'>
-        </form>
-    -->
+            </form>
+        </div>
     </script>
 
     <script id="create-text-post-template" type="text/x-handlebars-template">
-        <form class = "form">
-            <input type="text" placeholder="title" id = "text-title" class="create-post-title">
-            <textarea name="" id="" cols="30" rows="10"></textarea>
-            <input type="submit" value="submit" id = "create-post-text-submit-btn" class="create-post-submit-btn">
-        </form>
+            <div class="post-template-container">
+                <form class="form text">
+                    <input type="text" placeholder="title" id='text-title' class="create-post-title title">
+                    <textarea id="post-content-input" cols="30" rows="10"></textarea>
+                    <input type="submit" value="submit" id = "create-post-text-submit-btn" class="create-post-submit-btn">
+                </form>
+            </div>  
     </script>
+    <!--
+    <script id="create-text-post-template" type="text/x-handlebars-template">
+        <div class="create-post-template">
+            <div id="change-type-post">
+                <div id='text-post'>Text-Post</div>
+                <div id = 'video-post'>Video-Post</div>
+            </div>
+            <form class = "form">
+                <input type="text" placeholder="title" id = "text-title" class="create-post-title">
+                <textarea id="post-content-input" cols="30" rows="10"></textarea>
+                <input type="submit" value="submit" id = "create-post-text-submit-btn" class="create-post-submit-btn">
+            </form>
+        </div>
+    </script>
+-->
 
     <script id='create-new-post-selector' type="text/x-handlebars-template">
         <div id="change-type-post">

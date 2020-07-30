@@ -507,7 +507,7 @@ html,body{
     margin: 5px;
     border-bottom: 2px solid black;
 }
-
+/*
 .create-comment-container .comment-buttons{
     display: none;
     width: 80px;
@@ -518,6 +518,19 @@ html,body{
     padding: 5px;
     cursor: pointer;
 }
+*/
+.create-comment-container .comment-buttons{
+    display: none;
+}
+
+.create-comment-container .comment-btn{
+    background-color: lightgray;
+}
+
+.create-comment-container .active-span{
+    display: block;
+}
+/*
 .create-comment-container .active-span{
     display: block;
     float: right;
@@ -530,6 +543,8 @@ html,body{
     cursor: pointer;
     
 }
+*/
+/*
 .create-comment-container button{
     width: 80px;
     height: 15px;
@@ -538,6 +553,7 @@ html,body{
     margin: auto 5px auto 5px;
     padding: 5px;
 }
+*/
 
 .comments-container{
     width: 98%;
@@ -569,14 +585,48 @@ html,body{
 }
 
 #change-type-post #text-post{
-    width: 50%;
+    width: 48%;
+    margin: 1px;
+    padding: 1px;
+    cursor: pointer;
 }
 #change-type-post #video-post{
-    width: 50%;
-    border-left: 2px solid black;
+    width: 48%;
+    margin: 1px;
+    padding: 1px;
+    cursor: pointer;
+    border-left: 1px solid black;
 }
 
+#change-type-post .active-post-template{
+    background-color: blue ;
+}
 
+.sub_comments_reply{
+    color: blue;
+    cursor: pointer;
+}
+
+.reply_span{
+    color: blue;
+    cursor: pointer;
+}
+.num_replies{
+    color: blue;
+    cursor: pointer;
+}
+
+.user_handle{
+    color: lightseagreen;
+}
+.comment-span{
+    color: red;
+    order: 2;
+}
+.comment-p-tag{
+    border:1px solid black;
+    display: flex;
+}
 /*media queries */
 @media screen and (min-width: 768px){
     .navbar {

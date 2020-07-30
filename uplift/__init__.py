@@ -41,8 +41,10 @@ from uplift.users.routes import users
 from uplift.main.routes import main
 from uplift.channels.routes import channels
 from uplift.posts.routes import posts
+from uplift.comments.routes import comments
 
 app.register_blueprint(main)
 app.register_blueprint(users)
 app.register_blueprint(channels)
 app.register_blueprint(posts)
+app.register_blueprint(comments)
