@@ -7,7 +7,6 @@ from uplift.models import (
     Comments,
     Likes_Dislikes,
     Reply_To_Comments,
-    Reply_To_Reply_Comments,
 )
 
 
@@ -22,5 +21,4 @@ def make_shell_context():
         "Comments": Comments,
         "Likes_Dislikes": Likes_Dislikes,
         "Reply_To_Comments": Reply_To_Comments,
-        "Reply_To_Reply_Comments": Reply_To_Reply_Comments,
     }

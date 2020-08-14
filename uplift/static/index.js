@@ -1434,22 +1434,30 @@ function load_individual_post(channel_name, first_load = null, post_title = null
                     reply_span_tag.innerHTML = 'reply';
                     reply_span_tag.classList.toggle('reply_span');
 
-                    // create the span to store the num replies
-                    let num_replies_span_tag = document.createElement('span');
-                    num_replies_span_tag.innerHTML = `num replies: ${num_replies}`;
-                    num_replies_span_tag.classList.toggle('num_replies');
+                    if (num_replies > 0) {
+                        // create the span to store the num replies
+                        let num_replies_span_tag = document.createElement('span');
+                        num_replies_span_tag.innerHTML = `view ${num_replies} replies`;
+                        num_replies_span_tag.classList.toggle('num_replies');
+                        // add the single comment container
+                        single_comment_container.append(comment_p_tag);
+                        single_comment_container.append(username_span_tag);
+                        single_comment_container.append(reply_span_tag);
+                        single_comment_container.append(num_replies_span_tag);
+                    }
 
-                    single_comment_container.append(comment_p_tag);
-                    single_comment_container.append(username_span_tag);
-                    single_comment_container.append(reply_span_tag);
-                    single_comment_container.append(num_replies_span_tag);
-
+                    else if (num_replies == 0) {
+                        single_comment_container.append(comment_p_tag);
+                        single_comment_container.append(username_span_tag);
+                        single_comment_container.append(reply_span_tag);
+                    }
 
                     full_comments_container.append(single_comment_container);
                 }
                 //post_title_text = post_title_text.replace(/ /g, "%");
                 //console.log(post_title_text)
                 //push a new history
+
                 history.pushState(destination.innerHTML, `/explore/channel/${channel_name}/posts/${ajax_post_title}`, `/explore/channel/${channel_name}/posts/${ajax_post_title}`);
                 like_dislike(load_indvidual_post = true);
                 comment_on_post(channel_name, post_title = post_title);
@@ -1559,7 +1567,26 @@ function load_individual_post(channel_name, first_load = null, post_title = null
                             reply_span_tag.innerHTML = 'reply';
                             reply_span_tag.classList.toggle('reply_span');
 
+                            if (num_replies > 0) {
+                                // create the span to store the num replies
+                                let num_replies_span_tag = document.createElement('span');
+                                num_replies_span_tag.innerHTML = `view ${num_replies} replies`;
+                                num_replies_span_tag.classList.toggle('num_replies');
+                                // add the single comment container
+                                single_comment_container.append(comment_p_tag);
+                                single_comment_container.append(username_span_tag);
+                                single_comment_container.append(reply_span_tag);
+                                single_comment_container.append(num_replies_span_tag);
+                            }
+
+                            else if (num_replies == 0) {
+                                single_comment_container.append(comment_p_tag);
+                                single_comment_container.append(username_span_tag);
+                                single_comment_container.append(reply_span_tag);
+
+                            }
                             // create the span to store the num replies
+                            /*
                             let num_replies_span_tag = document.createElement('span');
                             num_replies_span_tag.innerHTML = `num replies: ${num_replies}`;
                             num_replies_span_tag.classList.toggle('num_replies');
@@ -1568,6 +1595,7 @@ function load_individual_post(channel_name, first_load = null, post_title = null
                             single_comment_container.append(username_span_tag);
                             single_comment_container.append(reply_span_tag);
                             single_comment_container.append(num_replies_span_tag);
+                            */
 
                             full_comments_container.append(single_comment_container);
                         }
@@ -1911,152 +1939,284 @@ function reply_to_comment(channel_name) {
             }
         }
         num_replies_spans[i].onclick = () => {
-            let comment = comments[i].innerHTML;
-            let creator = comment_creator[i].innerHTML;
-            let post_title = document.querySelector('.title');
-            post_title = post_title.innerHTML;
-            console.log('the num replies button was clicked');
+            console.log('the user has clicked the num_replies_span');
+            let num_replies_text = num_replies_spans[i].innerHTML;
+            if (num_replies_text.includes('view')) {
+                console.log('The user can view the replies');
+                let comment = comments[i].innerHTML;
+                let creator = comment_creator[i].innerHTML;
+                let post_title = document.querySelector('.title');
+                post_title = post_title.innerHTML;
+                console.log('the num replies button was clicked');
 
-            // create new ajax call
-            const request = new XMLHttpRequest();
+                // create new ajax call
+                const request = new XMLHttpRequest();
 
-            request.open('post', `/explore/channel/${channel_name}/posts/${post_title}/get-sub-comments`);
+                request.open('post', `/explore/channel/${channel_name}/posts/${post_title}/get-sub-comments`);
 
-            request.onload = () => {
-                console.log('the ajax call has been sent succesfully');
+                request.onload = () => {
+                    console.log('the ajax call has been sent succesfully');
 
-                let data = JSON.parse(request.responseText);
+                    let data = JSON.parse(request.responseText);
 
-                if (data.success) {
-                    console.log('The ajax call has received a true success response from the server');
-                    let reply_comment_list = data.reply_comment_list;
-                    length = reply_comment_list.length;
-                    let comments_container = document.querySelector('.comments-container');
-                    comments_container.innerHTML = '';
+                    if (data.success) {
+                        console.log('The ajax call has received a true success response from the server');
+                        let reply_comment_list = data.reply_comment_list;
+                        length = reply_comment_list.length;
+                        // change the text in num replies
+                        num_replies_spans[i].innerHTML = `hide ${length} replies`;
+                        let comments_container = document.querySelector('.comments-container');
 
-                    // create the orginal comment that people have replied to
-                    let og_comment_container = document.createElement('div');
-                    og_comment_container.classList.toggle('original-comment-container');
+                        // create the reply comments container
+                        let reply_comments_container = document.createElement('div');
+                        reply_comments_container.classList.add('reply-comments-container');
+                        reply_comments_container.setAttribute('id', `replied-to-comment-${i}`);
 
-                    // create the p to store the comment
-                    let og_comment = document.createElement('p');
-                    og_comment.classList.toggle('og-comment');
-                    og_comment.innerHTML = comment;
-
-                    // create the span to store the og comment creator
-                    let og_comment_creator = document.createElement('span');
-                    og_comment_creator.classList.toggle('og-comment-creator');
-                    og_comment_creator.innerHTML = creator;
-
-                    // append the comment and the span tag to the og comment container
-                    og_comment_container.append(og_comment);
-                    og_comment_container.append(og_comment_creator);
-
-                    // append the og comment container to the comments container
-
-                    comments_container.append(og_comment_container);
+                        // get the comment_number 
+                        og_comment_number = i;
 
 
-                    for (let i = 0; i < length; i++) {
-                        // get the reply comment
-                        let reply = reply_comment_list[i].reply;
-                        let replying_to = reply_comment_list[i].replying_to;
+                        for (let i = 0; i < length; i++) {
+                            // get the reply comment
+                            let reply = reply_comment_list[i].reply;
+                            let replying_to = reply_comment_list[i].replying_to;
 
-                        replying_to = `@${replying_to} `;
+                            replying_to = `@${replying_to} `;
 
-                        // create a span for the user_handle 
-                        let user_handle = document.createElement('strong');
-                        user_handle.classList.toggle('user-handle');
-                        user_handle.innerHTML = replying_to;
+                            // create a span for the user_handle 
+                            let user_handle = document.createElement('strong');
+                            user_handle.classList.toggle('user-handle');
+                            user_handle.innerHTML = replying_to;
 
-                        // create the span to store the comment
-                        let span_comment = document.createElement('strong');
-                        span_comment.classList.toggle('comment');
-                        span_comment.classList.add('comment-span');
-                        span_comment.innerHTML = reply;
+                            // create the span to store the comment
+                            let span_comment = document.createElement('strong');
+                            //span_comment.classList.toggle('comment');
+                            span_comment.classList.add('comment-span');
+                            span_comment.classList.add('reply-comment');
+                            span_comment.innerHTML = reply;
 
-                        // create a paragraph for the reply comment
-                        let p = document.createElement('p');
-                        p.classList.toggle('comment-p-tag');
-                        p.append(span_comment);
-                        p.append(user_handle);
+                            // create a paragraph for the reply comment
+                            let p = document.createElement('p');
+                            p.classList.toggle('comment-p-tag');
+                            p.append(span_comment);
+                            p.append(user_handle);
 
-                        // get the creator of the reply comment
-                        let reply_creator = reply_comment_list[i].username;
+                            // get the creator of the reply comment
+                            let reply_creator = reply_comment_list[i].username;
 
-                        // create a span for the reply-creator
-                        let span = document.createElement('span');
-                        span.classList.toggle('creator')
-                        span.innerHTML = reply_creator;
+                            // create a span for the reply-creator
+                            let span = document.createElement('span');
+                            //span.classList.toggle('creator')
+                            span.classList.add('reply-creator');
+                            span.innerHTML = reply_creator;
 
-                        // create the single comment container
-                        let single_comment_container = document.createElement('div');
-                        single_comment_container.classList.toggle('single-comment-container');
+                            // create the single comment container
+                            let single_comment_container = document.createElement('div');
+                            single_comment_container.classList.toggle('replied-to-single-comment-container');
+                            single_comment_container.classList.add(`og-comment-replied-to-${og_comment_number}`);
 
-                        // create a tag for the user to intiate a reply to the comment
-                        let reply_tag = document.createElement('span');
-                        reply_tag.classList.toggle('sub_comments_reply');
-                        reply_tag.innerHTML = 'reply';
+                            // create a tag for the user to intiate a reply to the comment
+                            let reply_tag = document.createElement('span');
+                            reply_tag.classList.toggle('sub_comments_reply');
+                            reply_tag.innerHTML = 'reply';
 
-                        // append the reply comment to the container
-                        single_comment_container.append(p);
+                            // append the reply comment to the container
+                            single_comment_container.append(p);
 
-                        // append the creator of the comment container
-                        single_comment_container.append(span);
+                            // append the creator of the comment container
+                            single_comment_container.append(span);
 
-                        // append the reply_tag to the comment container
-                        single_comment_container.append(reply_tag);
+                            // append the reply_tag to the comment container
+                            single_comment_container.append(reply_tag);
 
-                        console.log(single_comment_container);
+                            console.log(single_comment_container);
 
-                        // append the single comment container to the comments_container
-                        console.log(comments_container);
-                        comments_container.append(single_comment_container);
+                            // append the single comment container to the comments_container
+                            reply_comments_container.append(single_comment_container);
+                        }
+
+                        comment_container[i].insertAdjacentElement('afterEnd', reply_comments_container);
+
+                        reply_to_reply_comment(channel_name);
+
                     }
-                    reply_to_reply_comment(channel_name);
 
+                    /*{
+                       console.log('The ajax call has received a true success response from the server');
+                       let reply_comment_list = data.reply_comment_list;
+                       length = reply_comment_list.length;
+                       let comments_container = document.querySelector('.comments-container');
+                       comments_container.innerHTML = '';
+    
+                       // create the orginal comment that people have replied to
+                       let og_comment_container = document.createElement('div');
+                       og_comment_container.classList.toggle('original-comment-container');
+    
+                       // create the p to store the comment
+                       let og_comment = document.createElement('p');
+                       og_comment.classList.toggle('og-comment');
+                       og_comment.innerHTML = comment;
+    
+                       // create the span to store the og comment creator
+                       let og_comment_creator = document.createElement('span');
+                       og_comment_creator.classList.toggle('og-comment-creator');
+                       og_comment_creator.innerHTML = creator;
+    
+                       // append the comment and the span tag to the og comment container
+                       og_comment_container.append(og_comment);
+                       og_comment_container.append(og_comment_creator);
+    
+                       // append the og comment container to the comments container
+    
+                       comments_container.append(og_comment_container);
+    
+    
+                       for (let i = 0; i < length; i++) {
+                           // get the reply comment
+                           let reply = reply_comment_list[i].reply;
+                           let replying_to = reply_comment_list[i].replying_to;
+    
+                           replying_to = `@${replying_to} `;
+    
+                           // create a span for the user_handle 
+                           let user_handle = document.createElement('strong');
+                           user_handle.classList.toggle('user-handle');
+                           user_handle.innerHTML = replying_to;
+    
+                           // create the span to store the comment
+                           let span_comment = document.createElement('strong');
+                           span_comment.classList.toggle('comment');
+                           span_comment.classList.add('comment-span');
+                           span_comment.innerHTML = reply;
+    
+                           // create a paragraph for the reply comment
+                           let p = document.createElement('p');
+                           p.classList.toggle('comment-p-tag');
+                           p.append(span_comment);
+                           p.append(user_handle);
+    
+                           // get the creator of the reply comment
+                           let reply_creator = reply_comment_list[i].username;
+    
+                           // create a span for the reply-creator
+                           let span = document.createElement('span');
+                           span.classList.toggle('creator')
+                           span.innerHTML = reply_creator;
+    
+                           // create the single comment container
+                           let single_comment_container = document.createElement('div');
+                           single_comment_container.classList.toggle('single-comment-container');
+    
+                           // create a tag for the user to intiate a reply to the comment
+                           let reply_tag = document.createElement('span');
+                           reply_tag.classList.toggle('sub_comments_reply');
+                           reply_tag.innerHTML = 'reply';
+    
+                           // append the reply comment to the container
+                           single_comment_container.append(p);
+    
+                           // append the creator of the comment container
+                           single_comment_container.append(span);
+    
+                           // append the reply_tag to the comment container
+                           single_comment_container.append(reply_tag);
+    
+                           console.log(single_comment_container);
+    
+                           // append the single comment container to the comments_container
+                           console.log(comments_container);
+                           comments_container.append(single_comment_container);
+    
+                           let destination = document.querySelector('.page-container');
+    
+                           // push the history
+                       }
+                       
+                       reply_to_reply_comment(channel_name);
+    
+                   }
+                   */
+                    else {
+                        console.log('there were some errors on the ajax call');
+                    }
                 }
-                else {
-                    console.log('there were some errors on the ajax call');
-                }
+                let submit_data = new FormData();
+                submit_data.append('comment', comment);
+                submit_data.append('creator', creator);
+                request.send(submit_data);
             }
-            let submit_data = new FormData();
-            submit_data.append('comment', comment);
-            submit_data.append('creator', creator);
-            request.send(submit_data);
+            else if (num_replies_text.includes('hide')) {
+                console.log('the user can hide the replies');
+                console.log('we need to remove the comments');
+                // get the container to remove
+                reply_to_comment_container = document.querySelector(`#replied-to-comment-${i}`);
+                reply_to_comment_container.remove();
+
+                let test_number = num_replies_text.split('hide ');
+                console.log(test_number);
+                test_number = test_number[1];
+                test_number = test_number.split(' replies');
+                console.log(test_number);
+                test_number = test_number[0];
+                console.log(test_number);
+                // change the num_replies inner html
+                num_replies_spans[i].innerHTML = `view ${test_number} replies`
+
+            }
         }
     }
 }
 
 function reply_to_reply_comment(channel_name) {
     console.log('the reply to reply comment button has been clicked');
-    let comment_container = document.getElementsByClassName('single-comment-container');
+    let sub_comments_container = document.getElementsByClassName('single-comment-container');
+    let replied_to_sub_comments_container = document.getElementsByClassName('replied-to-single-comment-container');
     let reply_btns = document.getElementsByClassName('sub_comments_reply');
-    comments = document.getElementsByClassName('comment');
-    creators = document.getElementsByClassName('creator');
-
-
-
+    comments = document.getElementsByClassName('reply-comment');
+    creators = document.getElementsByClassName('reply-creator');
     let length = reply_btns.length;
 
     for (let i = 0; i < length; i++) {
-        console.log(i);
         reply_btns[i].onclick = () => {
-            let comment = comments[i];
-            comment = comment.innerHTML;
+            let comment = comments[i].innerHTML;
+
             // extract the comment from the @ tag
-            let creator = creators[i];
-            creator = creator.innerHTML;
-            let og_comment = document.querySelector('.og-comment');
+            let creator = creators[i].innerHTML;
+
+            let id_of_og_comment = replied_to_sub_comments_container[i].classList;
+            let test_1 = id_of_og_comment[0];
+            let test_2 = id_of_og_comment[1];
+            let the_og_comment_number = null;
+            if (test_1.includes('og-comment-replied-to-')) {
+                test_1 = test_1.split('og-comment-replied-to-');
+                test_1 = test_1[1];
+                console.log('I have found the id of og comment');
+                console.log(test_1);
+                the_og_comment_number = test_1;
+            }
+            else if (test_2.includes('og-comment-replied-to-')) {
+                test_2 = test_2.split('og-comment-replied-to-');
+                test_2 = test_2[1];
+                console.log('I have found the id of of comment');
+                console.log(test_2);
+                the_og_comment_number = test_2;
+
+            }
+            // get the og_comment
+            let og_comment = sub_comments_container[the_og_comment_number];
+            og_comment = og_comment.getElementsByClassName('comment')[0];
+            console.log('horray i found the og comment');
             og_comment = og_comment.innerHTML;
-            let og_comment_creator = document.querySelector('.og-comment-creator');
+            // get the og comment creator
+            let og_comment_creator = sub_comments_container[the_og_comment_number];
+            og_comment_creator = og_comment_creator.getElementsByClassName('comment')[0];
             og_comment_creator = og_comment_creator.innerHTML;
             console.log('The user has clicked on the reply to reply function');
             console.log(comment);
             console.log(creator);
             // load the comment input field
 
-            let open_reply_to_comments = document.getElementsByClassName('reply-to-commnet');
+            let open_reply_to_comments = document.getElementsByClassName('reply-to-comment');
 
             if (open_reply_to_comments.length != 0) {
                 let length = open_reply_to_comments.length;
@@ -2089,7 +2249,7 @@ function reply_to_reply_comment(channel_name) {
             reply_to_comment_container.append(cancel_btn);
 
             // add the add comment container to the html document
-            comment_container[i].insertAdjacentElement('afterEnd', reply_to_comment_container);
+            replied_to_sub_comments_container[i].insertAdjacentElement('afterEnd', reply_to_comment_container);
 
             // select the cancel button
             let new_cancel_btn = document.querySelector('.reply-to-comment-cancel-btn');
@@ -2613,10 +2773,22 @@ window.onpopstate = (event) => {
         console.log('the url still includes a channel')
         let channel_name = url.split('http://127.0.0.1:5000/explore/channel/').pop();
         console.log(channel_name)
-        if (channel_name.includes('/posts')) {
+        if (channel_name.includes('/posts/')) {
+            console.log('There is a single post so wee should  all the comments function');
+            console.log('the comments function should be called');
+            channel_name = channel_name.split('/posts/')[0];
+            console.log(channel_name);
+            page.innerHTML = event.state;
+            comment_on_post(channel_name);
+            reply_to_comment(channel_name);
+            //comment_on_post();
+            //reply_to_comment();
+
+        }
+        else if (channel_name.includes('/posts')) {
             console.log('here we would call the like post function as well as the load_individual_post function');
             page.innerHTML = event.state;
-            channel_name = channel_name.split('/posts')[0]
+            channel_name = channel_name.split('/posts')[0];
             console.log('litty');
             console.log(channel_name)
             load_individual_post(channel_name);

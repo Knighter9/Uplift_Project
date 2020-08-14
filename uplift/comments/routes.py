@@ -17,7 +17,6 @@ from uplift.models import (
     Comments,
     Likes_Dislikes,
     Reply_To_Comments,
-    Reply_To_Reply_Comments,
 )
 from uplift import db
 from flask_login import current_user, login_required
@@ -127,10 +126,9 @@ def reply_to_comment(channel_name, post_title):
                     if comment_query:
                         print("The comment exists")
                         new_reply = Reply_To_Comments(
+                            main_comment=comment_query.id,
                             reply=reply,
-                            comment_id=comment_query.id,
                             reply_user_id=current_user.id,
-                            post_id=post.id,
                         )
                         print(comment_query.num_replies)
                         comment_query.num_replies += 1
@@ -154,6 +152,97 @@ def reply_to_comment(channel_name, post_title):
 
         else:
             return jsonify({"success": False})
+
+
+@comments.route(
+    "/explore/channel/<string:channel_name>/posts/<string:post_title>/reply-to-reply-comment",
+    methods=["POST"],
+)
+@login_required
+def reply_to_reply(channel_name, post_title):
+    print("the reply to reply function has been called")
+
+    # get the data from the form
+    sub_comment = request.form.get("comment")
+    sub_comment_creator = request.form.get("comment_creator")
+    og_comment = request.form.get("og_comment")
+    og_comment_creator = request.form.get("og_comment_creator")
+
+    reply = request.form.get("reply")
+
+    print(sub_comment)
+    print(sub_comment_creator)
+    print(og_comment)
+    print(og_comment_creator)
+
+    # see if the channel exists
+
+    channel = Channel.query.filter_by(channel_name=channel_name).first()
+
+    if channel:
+        print("The channel exists")
+
+        # see if the posts exits
+        post = Post.query.filter_by(title=post_title).first()
+
+        if post:
+            print("The post exists")
+
+            # check to see if the comment exists
+            main_comment = (
+                Comments.query.filter_by(post_id=post.id)
+                .filter_by(comment=og_comment)
+                .first()
+            )
+
+            """comment = (
+                Reply_To_Reply_Comments.query.filter_by(post_id=post.id)
+                .filter_by(reply=sub_comment)
+                .first()
+            )"""
+
+            if main_comment:
+                print("The comment main does exist")
+                print(main_comment)
+
+                # check to see if the comment the user wants to reply to exists
+                comment = (
+                    Reply_To_Comments.query.filter_by(main_comment=main_comment.id)
+                    .filter_by(reply=sub_comment)
+                    .first()
+                )
+                print(comment)
+
+                if comment:
+                    # create the reply to reply comment
+                    new_reply_comment = Reply_To_Comments(
+                        main_comment=main_comment.id,
+                        comment_replied_to=comment.id,
+                        reply=reply,
+                        reply_user_id=current_user.id,
+                    )
+
+                    db.session.add(new_reply_comment)
+
+                    main_comment.num_replies += 1
+
+                    db.session.commit()
+
+                    return jsonify({"success": True})
+
+                else:
+                    print("The comment does not exist")
+                    return jsonify({"success": False})
+
+            else:
+                print("The comment does not exist")
+                return jsonify({"success": False})
+        else:
+            print("The post doesn't exist")
+
+    else:
+        print("THe post does not exist")
+        return jsonify({"success": False})
 
 
 @comments.route(
@@ -241,7 +330,7 @@ def get_sub_comments(channel_name, post_title):
                         .all()
                     )
                     """
-
+                    """
                     sub_comments = (
                         Reply_To_Comments.query.filter_by(comment_id=main_comment.id)
                         .join(User, (User.id == Reply_To_Comments.reply_user_id))
@@ -257,10 +346,48 @@ def get_sub_comments(channel_name, post_title):
                         .add_columns(Reply_To_Reply_Comments.reply_to_reply)
                         .all()
                     )
+                    """
+                    sub_comments = (
+                        Reply_To_Comments.query.filter_by(main_comment=main_comment.id)
+                        .join(User, (User.id == Reply_To_Comments.reply_user_id))
+                        .add_columns(
+                            User.username,
+                            Reply_To_Comments.id,
+                            Reply_To_Comments.main_comment,
+                            Reply_To_Comments.comment_replied_to,
+                            Reply_To_Comments.reply,
+                            Reply_To_Comments.reply_user_id,
+                        )
+                        .all()
+                    )
 
                     reply_comment_list = []
 
                     for comment in sub_comments:
+                        print(comment.id)
+                        if comment.comment_replied_to:
+                            print("okay there is a reply to reply comment")
+                            i = comment.comment_replied_to - 1
+                            replying_to = sub_comments[i].username
+                            print(
+                                "this should be the comment that that the user replied to"
+                            )
+                            print(sub_comments[i].reply)
+                            reply_comment_object = {
+                                "reply": comment.reply,
+                                "username": comment.username,
+                                "replying_to": replying_to,
+                            }
+                            reply_comment_list.append(reply_comment_object)
+                        else:
+                            reply_comment_object = {
+                                "reply": comment.reply,
+                                "username": comment.username,
+                                "replying_to": main_comment.username,
+                            }
+                            reply_comment_list.append(reply_comment_object)
+
+                    """for comment in sub_comments:
                         print("--------------------------")
                         if comment.reply_to_reply:
                             print("#################################")
@@ -277,6 +404,7 @@ def get_sub_comments(channel_name, post_title):
                             "replying_to": main_comment.username,
                         }
                         reply_comment_list.append(reply_comment_object)
+                    """
 
                     return jsonify(
                         {"success": True, "reply_comment_list": reply_comment_list}
@@ -295,91 +423,3 @@ def get_sub_comments(channel_name, post_title):
             print("The channel does not exist")
 
             return jsonify({"success": False})
-
-
-@comments.route(
-    "/explore/channel/<string:channel_name>/posts/<string:post_title>/reply-to-reply-comment",
-    methods=["POST"],
-)
-@login_required
-def reply_to_reply(channel_name, post_title):
-    print("the reply to reply function has been called")
-
-    # get the data from the form
-    sub_comment = request.form.get("comment")
-    sub_comment_creator = request.form.get("comment_creator")
-    og_comment = request.form.get("og_comment")
-    og_comment_creator = request.form.get("og_comment_creator")
-
-    reply = request.form.get("reply")
-
-    print(sub_comment)
-    print(sub_comment_creator)
-    print(og_comment)
-    print(og_comment_creator)
-
-    # see if the channel exists
-
-    channel = Channel.query.filter_by(channel_name=channel_name).first()
-
-    if channel:
-        print("The channel exists")
-
-        # see if the posts exits
-        post = Post.query.filter_by(title=post_title).first()
-
-        if post:
-            print("The post exists")
-
-            # check to see if the comment exists
-            main_comment = (
-                Comments.query.filter_by(post_id=post.id)
-                .filter_by(comment=og_comment)
-                .first()
-            )
-
-            """comment = (
-                Reply_To_Reply_Comments.query.filter_by(post_id=post.id)
-                .filter_by(reply=sub_comment)
-                .first()
-            )"""
-
-            if main_comment:
-                print("The comment main does exist")
-                print(main_comment)
-
-                # check to see if the comment the user wants to reply to exists
-                comment = (
-                    Reply_To_Comments.query.filter_by(comment_id=main_comment.id)
-                    .filter_by(reply=sub_comment)
-                    .first()
-                )
-                print(comment)
-
-                if comment:
-                    # create the reply to reply comment
-                    reply_to_reply_comment = Reply_To_Reply_Comments(
-                        reply_to_reply=reply,
-                        reply_reply_user_id=current_user.id,
-                        reply_id=comment.id,
-                    )
-
-                    db.session.add(reply_to_reply_comment)
-                    db.session.commit()
-
-                    return jsonify({"success": True})
-
-                else:
-                    print("The comment does not exist")
-                    return jsonify({"success": False})
-
-            else:
-                print("The comment does not exist")
-                return jsonify({"success": False})
-        else:
-            print("The post doesn't exist")
-
-    else:
-        print("THe post does not exist")
-        return jsonify({"success": False})
-
