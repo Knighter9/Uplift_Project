@@ -63,6 +63,9 @@ class Comments(db.Model):
     num_dislikes = db.Column(db.Integer)
     num_replies = db.Column(db.Integer)
 
+    def __repr__(self):
+        return f"comment: {self.comment}"
+
 
 """class Reply_Comments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -77,6 +80,9 @@ class Reply_To_Comments(db.Model):
     comment_replied_to = db.Column(db.Integer, db.ForeignKey("reply__to__comments.id"))
     reply = db.Column(db.String(1000))
     reply_user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+
+    def __repr__(self):
+        return f"reply_comment: {self.reply}"
 
 
 """

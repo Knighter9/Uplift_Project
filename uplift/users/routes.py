@@ -53,9 +53,19 @@ def register():
                 db.session.commit()
 
                 # return data for the ajax call
+                print("The user has been registered")
+                # log the user in
+                user = User.query.filter_by(username=username).first()
+                print("I am about to log the new user in")
+                # log the user in
+                login_user(user)
+
+                print("I have logged the new user in")
+
                 return jsonify({"success": True, "username": username})
         else:
-            return jsonify(response)
+            print("the information provided was not valid")
+            return jsonify({"success": response})
 
     elif request.method == "GET":
         url_request = "/register"

@@ -362,17 +362,22 @@ def get_sub_comments(channel_name, post_title):
                     )
 
                     reply_comment_list = []
-
+                    first_comment_id = sub_comments[0]
+                    first_comment_id = first_comment_id.id
                     for comment in sub_comments:
                         print(comment.id)
                         if comment.comment_replied_to:
                             print("okay there is a reply to reply comment")
-                            i = comment.comment_replied_to - 1
+                            # i = comment.comment_replied_to - 1
+                            # replying_to = sub_comments[i].username
+                            i = comment.comment_replied_to
+                            print("the comment replied to id is ")
+                            print(i)
                             replying_to = sub_comments[i].username
                             print(
                                 "this should be the comment that that the user replied to"
                             )
-                            print(sub_comments[i].reply)
+                            # print(sub_comments[i].reply)
                             reply_comment_object = {
                                 "reply": comment.reply,
                                 "username": comment.username,
