@@ -9,6 +9,7 @@ from flask import (
     send_file,
     send_from_directory,
 )
+from sqlalchemy.orm import aliased
 from uplift.models import (
     User,
     Channel,
@@ -17,6 +18,7 @@ from uplift.models import (
     Comments,
     Likes_Dislikes,
     Reply_To_Comments,
+    All_Reply_Comments,
 )
 from uplift import db
 from flask_login import current_user, login_required
@@ -130,10 +132,16 @@ def reply_to_comment(channel_name, post_title):
                             reply=reply,
                             reply_user_id=current_user.id,
                         )
+                        all_comment_reply = All_Reply_Comments(
+                            main_comment=comment_query.id,
+                            all_reply_comment=reply,
+                            all_comment_user_id=current_user.id,
+                        )
                         print(comment_query.num_replies)
                         comment_query.num_replies += 1
 
                         db.session.add(new_reply)
+                        db.session.add(all_comment_reply)
                         db.session.commit()
 
                         return jsonify({"success": True})
@@ -213,15 +221,28 @@ def reply_to_reply(channel_name, post_title):
                 )
                 print(comment)
 
-                if comment:
+                real_comment = (
+                    All_Reply_Comments.query.filter_by(main_comment=main_comment.id)
+                    .filter_by(all_reply_comment=sub_comment)
+                    .first()
+                )
+
+                if real_comment:
                     # create the reply to reply comment
                     new_reply_comment = Reply_To_Comments(
                         main_comment=main_comment.id,
-                        comment_replied_to=comment.id,
+                        comment_replied_to=real_comment.id,
                         reply=reply,
                         reply_user_id=current_user.id,
                     )
 
+                    new_all_reply_comment = All_Reply_Comments(
+                        main_comment=main_comment.id,
+                        all_reply_comment=reply,
+                        all_comment_user_id=current_user.id,
+                    )
+
+                    db.session.add(new_all_reply_comment)
                     db.session.add(new_reply_comment)
 
                     main_comment.num_replies += 1
@@ -318,7 +339,110 @@ def get_sub_comments(channel_name, post_title):
                     print("The comment exists")
 
                     # query for the sub comments
+                    aliased_user = aliased(User)
+                    aliased_user2 = aliased(User)
+                    sub_comments = (
+                        Reply_To_Comments.query.filter_by(main_comment=main_comment.id)
+                        .join(
+                            aliased_user,
+                            (aliased_user.id == Reply_To_Comments.reply_user_id),
+                        )
+                        .add_columns(
+                            aliased_user.username.label("username"),
+                            Reply_To_Comments.id,
+                            Reply_To_Comments.main_comment,
+                            Reply_To_Comments.comment_replied_to,
+                            Reply_To_Comments.reply,
+                            Reply_To_Comments.reply_user_id,
+                        )
+                        .outerjoin(
+                            All_Reply_Comments,
+                            (
+                                All_Reply_Comments.id
+                                == Reply_To_Comments.comment_replied_to
+                            ),
+                        )
+                        .add_columns(All_Reply_Comments.all_comment_user_id)
+                        .outerjoin(
+                            aliased_user2,
+                            (
+                                aliased_user2.id
+                                == All_Reply_Comments.all_comment_user_id
+                            ),
+                        )
+                        .add_columns(aliased_user2.username.label("reply_username"))
+                        .all()
+                    )
+                    """.outerjoin(
+                            All_Reply_Comments,
+                            (
+                                All_Reply_Comments.id
+                                == Reply_To_Comments.comment_replied_to
+                            ),
+                        )
+                        .add_columns(All_Reply_Comments.all_comment_user_id)
+                        .join(
+                            aliased_user,
+                            (aliased_user.id == All_Reply_Comments.all_comment_user_id),
+                        )
+                        .add_columns(aliased_user.username.label("reply_username"))
+                        .all()
+                    """
+                    """.outerjoin(
+                            All_Reply_Comments,
+                            (
+                                All_Reply_Comments.id
+                                == Reply_To_Comments.comment_replied_to
+                            ),
+                        )
+                        .add_columns(All_Reply_Comments.all_comment_user_id)
+                        .join(User, (User.id == All_Reply_Comments.all_comment_user_id))
+                        .add_columns(User.username.label("reply_username"))
+                        """
 
+                    reply_comment_list = []
+
+                    for comment in sub_comments:
+                        print("There was a a reply comment")
+
+                        if comment.comment_replied_to:
+                            print(
+                                "There was a reply comment replying to another reply comment"
+                            )
+                            reply_comment_object = {
+                                "reply": comment.reply,
+                                "username": comment.username,
+                                "replying_to": comment.reply_username,
+                            }
+
+                            reply_comment_list.append(reply_comment_object)
+                        else:
+                            reply_comment_object = {
+                                "reply": comment.reply,
+                                "username": comment.username,
+                                "replying_to": False,
+                            }
+                            reply_comment_list.append(reply_comment_object)
+
+                        """
+                        if comment.comment_replied_to:
+                            print("There was a reply comment")
+                            reply_comment_object = {
+                                "reply": comment.reply,
+                                "username": comment.username,
+                                "replying_to": comment.reply_username,
+                            }
+
+                            reply_comment_list.append(reply_comment_object)
+
+                        else:
+                            reply_comment_object = {
+                                "reply": comment.reply,
+                                "username": comment.username,
+                                "replying_to": main_comment.username,
+                            }
+                            reply_comment_list.append(reply_comment_object)
+"""
                     """sub_comments = (
                         Reply_To_Comments.query.filter_by(comment_id=main_comment.id)
                         .join(User, (User.id == Reply_To_Comments.reply_user_id))
@@ -347,7 +471,8 @@ def get_sub_comments(channel_name, post_title):
                         .all()
                     )
                     """
-                    sub_comments = (
+                    # this is the one that was working
+                    """sub_comments = (
                         Reply_To_Comments.query.filter_by(main_comment=main_comment.id)
                         .join(User, (User.id == Reply_To_Comments.reply_user_id))
                         .add_columns(
@@ -391,7 +516,7 @@ def get_sub_comments(channel_name, post_title):
                                 "replying_to": main_comment.username,
                             }
                             reply_comment_list.append(reply_comment_object)
-
+                    """
                     """for comment in sub_comments:
                         print("--------------------------")
                         if comment.reply_to_reply:

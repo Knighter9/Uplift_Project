@@ -1981,12 +1981,6 @@ function reply_to_comment(channel_name) {
                             let reply = reply_comment_list[i].reply;
                             let replying_to = reply_comment_list[i].replying_to;
 
-                            replying_to = `@${replying_to} `;
-
-                            // create a span for the user_handle 
-                            let user_handle = document.createElement('strong');
-                            user_handle.classList.toggle('user-handle');
-                            user_handle.innerHTML = replying_to;
 
                             // create the span to store the comment
                             let span_comment = document.createElement('strong');
@@ -1999,7 +1993,16 @@ function reply_to_comment(channel_name) {
                             let p = document.createElement('p');
                             p.classList.toggle('comment-p-tag');
                             p.append(span_comment);
-                            p.append(user_handle);
+                            if (replying_to != false) {
+                                replying_to = `@${replying_to} `;
+
+                                // create a span for the user_handle 
+                                let user_handle = document.createElement('strong');
+                                user_handle.classList.toggle('user-handle');
+                                user_handle.innerHTML = replying_to;
+
+                                p.append(user_handle);
+                            }
 
                             // get the creator of the reply comment
                             let reply_creator = reply_comment_list[i].username;

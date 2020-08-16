@@ -74,6 +74,23 @@ class Comments(db.Model):
 """
 
 
+"""
+class All_Reply_Comments(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    main_comment = db.Column(db.Integer, db.ForeignKey("comments.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    comment = db.Column(db.String(1000))
+
+
+class Reply_To_Reply_Comments(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    main_comment = db.Column(db.Integer, db.ForeignKey("comments.id"))
+    replying_to = db.Column(db.Integer, db.ForeignKey("all__reply__comments.id"))
+    reply = db.Column(db.String(1000))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+"""
+
+
 class Reply_To_Comments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     main_comment = db.Column(db.Integer, db.ForeignKey("comments.id"))
@@ -83,6 +100,13 @@ class Reply_To_Comments(db.Model):
 
     def __repr__(self):
         return f"reply_comment: {self.reply}"
+
+
+class All_Reply_Comments(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    main_comment = db.Column(db.Integer, db.ForeignKey("comments.id"))
+    all_reply_comment = db.Column(db.String(1000))
+    all_comment_user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
 
 """
